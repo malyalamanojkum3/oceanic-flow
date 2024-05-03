@@ -1,15 +1,19 @@
 import { DrizzleAdapter } from "@auth/drizzle-adapter";
 import {
+  DefaultUser,
   getServerSession,
   type DefaultSession,
   type NextAuthOptions,
 } from "next-auth";
 import { type Adapter } from "next-auth/adapters";
-import DiscordProvider from "next-auth/providers/discord";
+import Discord from "next-auth/providers/discord";
 
 import { env } from "@/env";
 import { db } from "@/server/db";
-import { createTable } from "@/server/db/schema";
+import { createTable, users } from "@/server/db/schema";
+import { DefaultJWT } from "next-auth/jwt";
+import { eq } from "drizzle-orm";
+import { logger } from "@/lib/logging/winston";
 
 /**
  * Module augmentation for `next-auth` types. Allows us to add custom properties to the `session`
@@ -17,19 +21,22 @@ import { createTable } from "@/server/db/schema";
  *
  * @see https://next-auth.js.org/getting-started/typescript#module-augmentation
  */
+type UserRole = "admin" | "manager" | "viewer";
+
 declare module "next-auth" {
   interface Session extends DefaultSession {
     user: {
       id: string;
-      // ...other properties
-      // role: UserRole;
+      role: UserRole;
+      hasOnborded: boolean;
     } & DefaultSession["user"];
   }
 
-  // interface User {
-  //   // ...other properties
-  //   // role: UserRole;
-  // }
+  interface User extends DefaultUser {
+    id: string;
+    role: UserRole;
+    hasOnborded: boolean;
+  }
 }
 
 /**
@@ -38,18 +45,38 @@ declare module "next-auth" {
  * @see https://next-auth.js.org/configuration/options
  */
 export const authOptions: NextAuthOptions = {
+  session: {
+    strategy: "database",
+    maxAge: 14 * 24 * 60 * 60,
+  },
   callbacks: {
-    session: ({ session, user }) => ({
-      ...session,
-      user: {
-        ...session.user,
-        id: user.id,
-      },
-    }),
+    async session({ session, user }) {
+      logger.info({
+        message: `Fetching role form database for user ${user.id}`,
+        service: "auth",
+        timestamp: new Date(),
+      });
+      const dbUser = await db
+        .select({ role: users.role, hasOnboarded: users.hasOnborded })
+        .from(users)
+        .where(eq(users.email, user.email));
+
+      if (!dbUser)
+        logger.error({
+          message: `Error while fetching ${user.id}`,
+          service: "auth",
+          timestamp: new Date(),
+        });
+
+      session.user.role = dbUser[0]?.role ?? "viewer";
+      session.user.hasOnborded = dbUser[0]?.hasOnboarded ?? false;
+      session.user.id = user.id;
+      return session;
+    },
   },
   adapter: DrizzleAdapter(db, createTable) as Adapter,
   providers: [
-    DiscordProvider({
+    Discord({
       clientId: env.DISCORD_CLIENT_ID,
       clientSecret: env.DISCORD_CLIENT_SECRET,
     }),

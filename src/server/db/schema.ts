@@ -1,15 +1,20 @@
+import { randomUUID } from "crypto";
 import { relations, sql } from "drizzle-orm";
 import {
+  boolean,
   index,
   integer,
+  pgEnum,
   pgTableCreator,
   primaryKey,
-  serial,
   text,
   timestamp,
   varchar,
 } from "drizzle-orm/pg-core";
 import { type AdapterAccount } from "next-auth/adapters";
+
+// make sure to check out /server/auth.ts to sync roles
+export const rolesEnum = pgEnum("role", ["admin", "manager", "viewer"]);
 
 /**
  * This is an example of how to use the multi-project schema feature of Drizzle ORM. Use the same
@@ -19,23 +24,52 @@ import { type AdapterAccount } from "next-auth/adapters";
  */
 export const createTable = pgTableCreator((name) => `oceanic-flow_${name}`);
 
-export const posts = createTable(
-  "post",
+export const organizations = createTable("organization", {
+  id: varchar("id").notNull().primaryKey(),
+  name: varchar("name", { length: 255 }).notNull(),
+  ownerId: varchar("ownerId", { length: 255 })
+    .notNull()
+    .references(() => users.id),
+});
+
+export const organizationsRelations = relations(
+  organizations,
+  ({ many, one }) => ({
+    owner: one(users, {
+      fields: [organizations.ownerId],
+      references: [users.id],
+    }),
+    members: many(users),
+  }),
+);
+
+export const usersToOrganizations = createTable(
+  "organizations_to_users",
   {
-    id: serial("id").primaryKey(),
-    name: varchar("name", { length: 256 }),
-    createdById: varchar("createdById", { length: 255 })
+    userId: varchar("userId")
       .notNull()
       .references(() => users.id),
-    createdAt: timestamp("created_at")
-      .default(sql`CURRENT_TIMESTAMP`)
-      .notNull(),
-    updatedAt: timestamp("updatedAt"),
+    organizationId: varchar("organizationId")
+      .notNull()
+      .references(() => organizations.id),
   },
-  (example) => ({
-    createdByIdIdx: index("createdById_idx").on(example.createdById),
-    nameIndex: index("name_idx").on(example.name),
-  })
+  (t) => ({
+    pk: primaryKey({ columns: [t.userId, t.organizationId] }),
+  }),
+);
+
+export const usersToOrganizationsRelations = relations(
+  usersToOrganizations,
+  ({ one }) => ({
+    group: one(organizations, {
+      fields: [usersToOrganizations.organizationId],
+      references: [organizations.id],
+    }),
+    user: one(users, {
+      fields: [usersToOrganizations.userId],
+      references: [users.id],
+    }),
+  }),
 );
 
 export const users = createTable("user", {
@@ -46,10 +80,13 @@ export const users = createTable("user", {
     mode: "date",
   }).default(sql`CURRENT_TIMESTAMP`),
   image: varchar("image", { length: 255 }),
+  role: rolesEnum("role").default("admin").notNull(),
+  hasOnborded: boolean("hasOnborded").default(false),
 });
 
 export const usersRelations = relations(users, ({ many }) => ({
   accounts: many(accounts),
+  organizations: many(organizations),
 }));
 
 export const accounts = createTable(
@@ -76,7 +113,7 @@ export const accounts = createTable(
       columns: [account.provider, account.providerAccountId],
     }),
     userIdIdx: index("account_userId_idx").on(account.userId),
-  })
+  }),
 );
 
 export const accountsRelations = relations(accounts, ({ one }) => ({
@@ -96,7 +133,7 @@ export const sessions = createTable(
   },
   (session) => ({
     userIdIdx: index("session_userId_idx").on(session.userId),
-  })
+  }),
 );
 
 export const sessionsRelations = relations(sessions, ({ one }) => ({
@@ -112,5 +149,5 @@ export const verificationTokens = createTable(
   },
   (vt) => ({
     compoundKey: primaryKey({ columns: [vt.identifier, vt.token] }),
-  })
+  }),
 );
