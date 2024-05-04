@@ -28,14 +28,14 @@ declare module "next-auth" {
     user: {
       id: string;
       role: UserRole;
-      hasOnborded: boolean;
+      hasOnboarded: boolean;
     } & DefaultSession["user"];
   }
 
   interface User extends DefaultUser {
     id: string;
     role: UserRole;
-    hasOnborded: boolean;
+    hasOnboarded: boolean;
   }
 }
 
@@ -56,20 +56,26 @@ export const authOptions: NextAuthOptions = {
         service: "auth",
         timestamp: new Date(),
       });
-      const dbUser = await db
-        .select({ role: users.role, hasOnboarded: users.hasOnborded })
-        .from(users)
-        .where(eq(users.email, user.email));
+      const dbUserOrg = await db.query.usersToOrganizations.findFirst({
+        where: (usersToOrganizations, { eq }) =>
+          eq(usersToOrganizations.userId, user.id),
+        with: {
+          user: {
+            columns: {
+              hasOnboarded: true,
+            },
+          },
+        },
+      });
 
-      if (!dbUser)
+      if (!dbUserOrg)
         logger.error({
           message: `Error while fetching ${user.id}`,
           service: "auth",
           timestamp: new Date(),
         });
 
-      session.user.role = dbUser[0]?.role ?? "viewer";
-      session.user.hasOnborded = dbUser[0]?.hasOnboarded ?? false;
+      session.user.hasOnboarded = dbUserOrg?.user.hasOnboarded ?? false;
       session.user.id = user.id;
       return session;
     },

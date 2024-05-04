@@ -44,7 +44,7 @@ export const organizationsRelations = relations(
 );
 
 export const usersToOrganizations = createTable(
-  "organizations_to_users",
+  "users_to_organizations",
   {
     userId: varchar("userId")
       .notNull()
@@ -52,6 +52,7 @@ export const usersToOrganizations = createTable(
     organizationId: varchar("organizationId")
       .notNull()
       .references(() => organizations.id),
+    role: rolesEnum("role").default("viewer").notNull(),
   },
   (t) => ({
     pk: primaryKey({ columns: [t.userId, t.organizationId] }),
@@ -80,8 +81,7 @@ export const users = createTable("user", {
     mode: "date",
   }).default(sql`CURRENT_TIMESTAMP`),
   image: varchar("image", { length: 255 }),
-  role: rolesEnum("role").default("admin").notNull(),
-  hasOnborded: boolean("hasOnborded").default(false),
+  hasOnboarded: boolean("hasOnboarded").default(false),
 });
 
 export const usersRelations = relations(users, ({ many }) => ({

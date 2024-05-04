@@ -8,7 +8,7 @@ type Props = {};
 const Onboarding = async (props: Props) => {
   const session = await getServerAuthSession();
   if (!session) redirect("/");
-  if (!session.user.hasOnborded) return <DashboardOnboarding />;
+  if (!session.user.hasOnboarded) return <DashboardOnboarding />;
   return redirect("/dashboard");
 };
 

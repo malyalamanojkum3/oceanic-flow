@@ -1,18 +1,27 @@
 import { createTRPCRouter, protectedProcedure } from "../trpc";
-import { onboardingSchema } from "@/components/dashboard/forms/onboarding-form";
 import { organizations, users, usersToOrganizations } from "@/server/db/schema";
-import { nanoid } from "nanoid";
+import { customAlphabet } from "nanoid";
 import { eq } from "drizzle-orm";
 import { z } from "zod";
+import slugify from "slugify";
+
+const nanoid = customAlphabet("abcdefghijklmnopqrstuvxyz0123456789", 10);
 
 export const organizationRouter = createTRPCRouter({
+  getUserOrgs: protectedProcedure.query(async ({ ctx }) => {
+    return await ctx.db.query.organizations.findMany({
+      where: (organizations, { eq }) =>
+        eq(organizations.ownerId, ctx.session.user.id),
+    });
+  }),
   finishOnboarding: protectedProcedure
-    .input(z.object({ name: z.string() }))
+    .input(z.object({ name: z.string().trim() }))
     .mutation(async ({ ctx, input }) => {
+      const slug = slugify(input.name);
       const org = await ctx.db
         .insert(organizations)
         .values({
-          id: `${input.name}-${nanoid()}`,
+          id: `${slug}-${nanoid()}`,
           name: input.name,
           ownerId: ctx.session.user.id,
         })
@@ -24,15 +33,9 @@ export const organizationRouter = createTRPCRouter({
 
       await ctx.db
         .update(users)
-        .set({ hasOnborded: true })
+        .set({ hasOnboarded: true })
         .where(eq(users.id, ctx.session.user.id));
 
       return org;
     }),
-  getUserOrgs: protectedProcedure.query(async ({ ctx }) => {
-    return await ctx.db.query.organizations.findMany({
-      where: (organizations, { eq }) =>
-        eq(organizations.ownerId, ctx.session.user.id),
-    });
-  }),
 });
