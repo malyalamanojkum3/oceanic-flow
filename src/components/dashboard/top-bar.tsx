@@ -39,9 +39,6 @@ const DashboardTopBar = ({ session }: { session: Session | null }) => {
           <DropdownMenuLabel className="text-sm text-secondary-foreground">
             {session?.user.email}
           </DropdownMenuLabel>
-          <DropdownMenuLabel className="text-xs text-secondary-foreground">
-            {session?.user.role}
-          </DropdownMenuLabel>
           <DropdownMenuSeparator />
           <DropdownMenuSub>
             <DropdownMenuSubTrigger>

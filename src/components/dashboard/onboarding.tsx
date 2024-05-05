@@ -1,5 +1,5 @@
 import Image from "next/image";
-import DashboardOnboardingForm from "./forms/onboarding-form";
+import DashboardOnboardingForm from "./forms/onboarding";
 
 const DashboardOnboarding = () => {
   return (

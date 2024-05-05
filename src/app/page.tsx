@@ -14,7 +14,7 @@ export default async function Home() {
         <Link className="mx-auto my-6" href="/dashboard">
           <Button
             onClick={() =>
-              signIn("discord", {
+              signIn("google", {
                 callbackUrl: "http://localhost:3000/dashboard",
               })
             }

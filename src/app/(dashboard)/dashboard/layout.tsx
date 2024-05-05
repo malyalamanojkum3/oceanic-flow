@@ -12,7 +12,7 @@ type Props = {
 const DashboardLayout = async ({ children }: Props) => {
   const session = await getServerAuthSession();
   if (!session || !session.user) redirect("/");
-  if (!session?.user.hasOnborded) {
+  if (!session?.user.hasOnboarded) {
     redirect("/onboarding");
   }
   return (
@@ -20,7 +20,7 @@ const DashboardLayout = async ({ children }: Props) => {
       <DashboardSideBar />
       <div className="w-full">
         <DashboardTopBar session={session} />
-        {children}
+        <div className="mx-auto max-w-7xl p-8">{children}</div>
       </div>
     </main>
   );

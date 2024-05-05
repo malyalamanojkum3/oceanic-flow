@@ -2,8 +2,6 @@
 
 import { z } from "zod";
 
-// import { finishOnboarding, onSubmit } from "./actions";
-
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useForm, useFormState } from "react-hook-form";
 

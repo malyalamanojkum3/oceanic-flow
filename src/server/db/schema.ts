@@ -27,21 +27,22 @@ export const createTable = pgTableCreator((name) => `oceanic-flow_${name}`);
 export const organizations = createTable("organization", {
   id: varchar("id").notNull().primaryKey(),
   name: varchar("name", { length: 255 }).notNull(),
+  createdAt: timestamp("createdAt", {
+    mode: "date",
+  })
+    .default(sql`CURRENT_TIMESTAMP`)
+    .notNull(),
   ownerId: varchar("ownerId", { length: 255 })
     .notNull()
     .references(() => users.id),
 });
 
-export const organizationsRelations = relations(
-  organizations,
-  ({ many, one }) => ({
-    owner: one(users, {
-      fields: [organizations.ownerId],
-      references: [users.id],
-    }),
-    members: many(users),
+export const organizationsRelations = relations(organizations, ({ one }) => ({
+  owner: one(users, {
+    fields: [organizations.ownerId],
+    references: [users.id],
   }),
-);
+}));
 
 export const usersToOrganizations = createTable(
   "users_to_organizations",
@@ -62,7 +63,7 @@ export const usersToOrganizations = createTable(
 export const usersToOrganizationsRelations = relations(
   usersToOrganizations,
   ({ one }) => ({
-    group: one(organizations, {
+    organizations: one(organizations, {
       fields: [usersToOrganizations.organizationId],
       references: [organizations.id],
     }),
@@ -81,7 +82,7 @@ export const users = createTable("user", {
     mode: "date",
   }).default(sql`CURRENT_TIMESTAMP`),
   image: varchar("image", { length: 255 }),
-  hasOnboarded: boolean("hasOnboarded").default(false),
+  hasOnboarded: boolean("hasOnboarded").default(false).notNull(),
 });
 
 export const usersRelations = relations(users, ({ many }) => ({

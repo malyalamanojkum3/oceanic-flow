@@ -7,12 +7,11 @@ import {
 } from "next-auth";
 import { type Adapter } from "next-auth/adapters";
 import Discord from "next-auth/providers/discord";
+import Google from "next-auth/providers/google";
 
 import { env } from "@/env";
 import { db } from "@/server/db";
-import { createTable, users } from "@/server/db/schema";
-import { DefaultJWT } from "next-auth/jwt";
-import { eq } from "drizzle-orm";
+import { createTable } from "@/server/db/schema";
 import { logger } from "@/lib/logging/winston";
 
 /**
@@ -27,14 +26,12 @@ declare module "next-auth" {
   interface Session extends DefaultSession {
     user: {
       id: string;
-      role: UserRole;
       hasOnboarded: boolean;
     } & DefaultSession["user"];
   }
 
   interface User extends DefaultUser {
     id: string;
-    role: UserRole;
     hasOnboarded: boolean;
   }
 }
@@ -56,27 +53,22 @@ export const authOptions: NextAuthOptions = {
         service: "auth",
         timestamp: new Date(),
       });
-      const dbUserOrg = await db.query.usersToOrganizations.findFirst({
-        where: (usersToOrganizations, { eq }) =>
-          eq(usersToOrganizations.userId, user.id),
-        with: {
-          user: {
-            columns: {
-              hasOnboarded: true,
-            },
-          },
-        },
+      const dbUser = await db.query.users.findFirst({
+        where: (users, { eq }) => eq(users.id, user.id),
       });
 
-      if (!dbUserOrg)
+      if (!dbUser) {
         logger.error({
           message: `Error while fetching ${user.id}`,
           service: "auth",
           timestamp: new Date(),
         });
+        throw Error("Could not make session.");
+      }
 
-      session.user.hasOnboarded = dbUserOrg?.user.hasOnboarded ?? false;
+      session.user.hasOnboarded = dbUser.hasOnboarded;
       session.user.id = user.id;
+
       return session;
     },
   },
@@ -85,6 +77,10 @@ export const authOptions: NextAuthOptions = {
     Discord({
       clientId: env.DISCORD_CLIENT_ID,
       clientSecret: env.DISCORD_CLIENT_SECRET,
+    }),
+    Google({
+      clientId: env.GOOGLE_CLIENT_ID,
+      clientSecret: env.GOOGLE_CLIENT_SECRET,
     }),
     /**
      * ...add more providers here.
