@@ -4,11 +4,12 @@ import { customAlphabet } from "nanoid";
 import { eq } from "drizzle-orm";
 import { z } from "zod";
 import slugify from "slugify";
+import { TRPCError } from "@trpc/server";
 
 const nanoid = customAlphabet("abcdefghijklmnopqrstuvxyz0123456789", 14);
 
 export const organizationRouter = createTRPCRouter({
-  addOrganization: protectedProcedure
+  create: protectedProcedure
     .input(z.object({ name: z.string().trim() }))
     .mutation(async ({ ctx, input }) => {
       const slug = slugify(input.name, { lower: true });
@@ -21,9 +22,12 @@ export const organizationRouter = createTRPCRouter({
         })
         .returning({ id: organizations.id });
 
+      if (org.length === 0 || !org[0]?.id)
+        throw new TRPCError({ code: "INTERNAL_SERVER_ERROR" });
+
       await ctx.db.insert(usersToOrganizations).values({
         userId: ctx.session.user.id,
-        organizationId: org[0]?.id!,
+        organizationId: org[0].id,
         role: "admin",
       });
     }),
@@ -48,9 +52,12 @@ export const organizationRouter = createTRPCRouter({
         })
         .returning({ id: organizations.id });
 
+      if (org.length === 0 || !org[0]?.id)
+        throw new TRPCError({ code: "INTERNAL_SERVER_ERROR" });
+
       await ctx.db.insert(usersToOrganizations).values({
         userId: ctx.session.user.id,
-        organizationId: org[0]?.id!,
+        organizationId: org[0].id,
         role: "admin",
       });
 

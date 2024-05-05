@@ -14,7 +14,7 @@ import { useRouter } from "next/navigation";
 import AddOrganizationCard from "@/components/dashboard/add-org-card";
 
 const Dashboard = () => {
-  const [orgs, queryOrgs] = api.orgs.getUserOrgs.useSuspenseQuery();
+  const [orgs] = api.orgs.getUserOrgs.useSuspenseQuery();
   const router = useRouter();
 
   return (

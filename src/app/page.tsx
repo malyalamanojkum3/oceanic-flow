@@ -4,7 +4,7 @@ import { Button } from "@/components/primitives/button";
 import { signIn } from "next-auth/react";
 import Link from "next/link";
 
-export default async function Home() {
+export default function Home() {
   return (
     <main className="grid h-screen items-center justify-center">
       <div className="flex flex-col">

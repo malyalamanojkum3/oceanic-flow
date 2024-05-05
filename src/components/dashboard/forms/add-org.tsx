@@ -25,10 +25,10 @@ export const newOrgSchema = z.object({
 
 const AddOrganizationForm = () => {
   const utils = api.useUtils();
-  const mutation = api.orgs.addOrganization.useMutation({
-    onSuccess: () => {
+  const mutation = api.orgs.create.useMutation({
+    onSuccess: async () => {
       toast.success(`Created organization succesfully.`);
-      utils.orgs.invalidate();
+      await utils.orgs.invalidate();
     },
     onError: () => {
       toast.error(

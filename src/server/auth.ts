@@ -1,9 +1,9 @@
 import { DrizzleAdapter } from "@auth/drizzle-adapter";
 import {
-  DefaultUser,
-  getServerSession,
+  type DefaultUser,
   type DefaultSession,
   type NextAuthOptions,
+  getServerSession,
 } from "next-auth";
 import { type Adapter } from "next-auth/adapters";
 import Discord from "next-auth/providers/discord";
@@ -20,7 +20,6 @@ import { logger } from "@/lib/logging/winston";
  *
  * @see https://next-auth.js.org/getting-started/typescript#module-augmentation
  */
-type UserRole = "admin" | "manager" | "viewer";
 
 declare module "next-auth" {
   interface Session extends DefaultSession {

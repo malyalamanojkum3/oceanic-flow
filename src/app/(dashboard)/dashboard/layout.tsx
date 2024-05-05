@@ -1,9 +1,8 @@
-import DashboardOnboarding from "@/components/dashboard/onboarding";
 import DashboardSideBar from "@/components/dashboard/side-bar";
 import DashboardTopBar from "@/components/dashboard/top-bar";
 import { getServerAuthSession } from "@/server/auth";
 import { redirect } from "next/navigation";
-import { ReactNode } from "react";
+import { cache, type ReactNode } from "react";
 
 type Props = {
   children: ReactNode;
@@ -11,10 +10,10 @@ type Props = {
 
 const DashboardLayout = async ({ children }: Props) => {
   const session = await getServerAuthSession();
-  if (!session || !session.user) redirect("/");
-  if (!session?.user.hasOnboarded) {
-    redirect("/onboarding");
-  }
+  // if (!session || !session.user) redirect("/");
+  // if (!session?.user.hasOnboarded) {
+  //   redirect("/onboarding");
+  // }
   return (
     <main className="flex h-screen w-full flex-row">
       <DashboardSideBar />

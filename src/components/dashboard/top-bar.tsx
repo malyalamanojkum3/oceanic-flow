@@ -7,7 +7,7 @@ import { useMediaQuery } from "@/lib/hooks/use-media-query";
 import { LogOut, Menu, Moon, Sun, SunMoon } from "lucide-react";
 import React from "react";
 import { Avatar, AvatarImage } from "../primitives/avatar";
-import { Session } from "next-auth";
+import { type Session } from "next-auth";
 import {
   DropdownMenu,
   DropdownMenuContent,
@@ -32,7 +32,7 @@ const DashboardTopBar = ({ session }: { session: Session | null }) => {
       <DropdownMenu>
         <DropdownMenuTrigger className="ml-auto">
           <Avatar>
-            <AvatarImage src={session?.user.image!} />
+            <AvatarImage src={session?.user.image ?? ""} />
           </Avatar>
         </DropdownMenuTrigger>
         <DropdownMenuContent className="" align="end">
