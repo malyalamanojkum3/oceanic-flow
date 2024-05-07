@@ -3,8 +3,8 @@ import DashboardOnboardingForm from "./forms/onboarding";
 
 const DashboardOnboarding = () => {
   return (
-    <main className="grid h-screen items-center justify-center">
-      <div className="">
+    <main className="grid h-screen items-center justify-center p-2">
+      <div>
         <Image
           className="mx-auto my-4"
           src="/REPLACE_ME.svg"

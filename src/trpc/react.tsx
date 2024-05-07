@@ -9,7 +9,14 @@ import SuperJSON from "superjson";
 
 import { type AppRouter } from "@/server/api/root";
 
-const createQueryClient = () => new QueryClient();
+const createQueryClient = () =>
+  new QueryClient({
+    defaultOptions: {
+      queries: {
+        refetchOnWindowFocus: false,
+      },
+    },
+  });
 
 let clientQueryClientSingleton: QueryClient | undefined = undefined;
 const getQueryClient = () => {
@@ -58,7 +65,7 @@ export function TRPCReactProvider(props: { children: React.ReactNode }) {
           },
         }),
       ],
-    })
+    }),
   );
 
   return (

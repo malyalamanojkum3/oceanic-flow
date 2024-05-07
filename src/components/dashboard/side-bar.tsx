@@ -1,96 +1,105 @@
 "use client";
 
-import { type PropsWithChildren } from "react";
-import Link from "next/link";
-
-import {
-  DropdownMenuTrigger,
-  DropdownMenu,
-  DropdownMenuContent,
-  DropdownMenuLabel,
-  DropdownMenuItem,
-} from "@/components/primitives/dropdown-menu";
-import { Sheet, SheetContent } from "../primitives/sheet";
-import { ChevronsUpDown } from "lucide-react";
-import Image from "next/image";
+import { type ReactNode, type PropsWithChildren } from "react";
 
 import { useMediaQuery } from "@/lib/hooks/use-media-query";
 import { useUIStore } from "@/app/states/ui";
 import { cn } from "@/lib/utils";
-import { api } from "@/trpc/react";
-import { Badge } from "../primitives/badge";
-import { Button } from "../primitives/button";
-import {
-  Credenza,
-  CredenzaContent,
-  CredenzaDescription,
-  CredenzaHeader,
-  CredenzaTitle,
-  CredenzaTrigger,
-} from "../responsive-modal";
-import AddOrganizationForm from "./forms/add-org";
+
+import { Sheet, SheetContent } from "../primitives/sheet";
+
+import { usePathname } from "next/navigation";
+import SelectOrganizationsDropdown from "./select-orgs";
+import Link from "next/link";
+
+import { useShallow } from "zustand/react/shallow";
+import slugify from "slugify";
+
+import { primaryDataSource } from "@/lib/psd";
+import { SquareDashedKanban, UserRoundCog } from "lucide-react";
+
+const orgUrl = "/dashboard/org";
 
 const DashboardSideBar = () => {
-  const [orgs, queryOrgs] = api.orgs.getUserOrgs.useSuspenseQuery();
-
+  const pathname = usePathname();
+  const { currentOrgId, toggleSideBar } = useUIStore(
+    useShallow((state) => ({
+      currentOrgId: state.currentOrgId,
+      toggleSideBar: state.toggleSideBar,
+    })),
+  );
+  if (!pathname.startsWith("/dashboard/")) return <></>;
   return (
     <ResponsiveWrapper>
-      <Credenza>
-        <DropdownMenu>
-          <DropdownMenuTrigger className="mt-4 w-full rounded border border-border bg-background p-2 px-4 lg:mt-0">
-            <div className="flex flex-row items-center gap-2">
-              <Image
-                src="/REPLACE_ME.svg"
-                alt="REPLACE ALT DESC"
-                width={24}
-                height={24}
-              />
-              <p className="font-medium">Organization</p>
-              <ChevronsUpDown className="ml-auto" size={16} />
-            </div>
-          </DropdownMenuTrigger>
-          <DropdownMenuContent className="w-full min-w-[270px]">
-            <DropdownMenuLabel className="text-xs font-medium text-muted-foreground">
-              Organizations
-            </DropdownMenuLabel>
-            {!queryOrgs.data?.length && (
-              <DropdownMenuLabel className="text-center text-[0.75rem]">
-                Currently no organizations.
-              </DropdownMenuLabel>
-            )}
-            {orgs.map(({ role, organizations: { id, name } }) => (
-              <Link
-                key={id}
-                href={{
-                  pathname: `/dashboard/org/${id}`,
-                }}
+      <SelectOrganizationsDropdown />
+      <hr className="my-2 border-0" />
+      <div className="no-scrollbar space-y-4 overflow-y-scroll">
+        <DashboardSideBarMenu>
+          <DashboardSideBarLink
+            onClick={toggleSideBar}
+            href={`/dashboard/org/${currentOrgId}/overview`}
+            icon={<SquareDashedKanban />}
+          >
+            Dashboard
+          </DashboardSideBarLink>
+        </DashboardSideBarMenu>
+        <DashboardSideBarMenu>
+          <DashboardSideBarHeader>Primary Data Source</DashboardSideBarHeader>
+          <div className="space-y-0.5">
+            {primaryDataSource.map((source) => (
+              <DashboardSideBarLink
+                onClick={toggleSideBar}
+                key={source.name}
+                href={`${orgUrl}/${currentOrgId}/${slugify(source.name, { lower: true, trim: true })}`}
+                icon={source.icon}
               >
-                <DropdownMenuItem>
-                  {name}
-                  <Badge className="ml-auto capitalize">{role}</Badge>
-                </DropdownMenuItem>
-              </Link>
+                {source.name}
+              </DashboardSideBarLink>
             ))}
-            <DropdownMenuItem className="cursor-default hover:bg-transparent focus:bg-transparent">
-              <CredenzaTrigger asChild className="w-full">
-                <Button variant={"dashed"} size={"sm"} className="w-full">
-                  Create an Organization
-                </Button>
-              </CredenzaTrigger>
-            </DropdownMenuItem>
-          </DropdownMenuContent>
-        </DropdownMenu>
-        <CredenzaContent>
-          <CredenzaHeader>
-            <CredenzaTitle>Create an Organization</CredenzaTitle>
-            <CredenzaDescription>
-              Choose a name for your organization and submit it.
-            </CredenzaDescription>
-          </CredenzaHeader>
-          <AddOrganizationForm />
-        </CredenzaContent>
-      </Credenza>
+          </div>
+        </DashboardSideBarMenu>
+        <DashboardSideBarMenu>
+          <DashboardSideBarHeader>Settings</DashboardSideBarHeader>
+          <DashboardSideBarLink
+            onClick={toggleSideBar}
+            href={`/dashboard/org/${currentOrgId}/settings`}
+            icon={<UserRoundCog />}
+          >
+            User Management
+          </DashboardSideBarLink>
+        </DashboardSideBarMenu>
+      </div>
     </ResponsiveWrapper>
+  );
+};
+
+interface DashboardSidebarItemProps
+  extends React.AnchorHTMLAttributes<HTMLAnchorElement> {
+  href: string;
+  icon: ReactNode;
+}
+
+const DashboardSideBarMenu = ({ children }: PropsWithChildren) => {
+  return <div>{children}</div>;
+};
+
+const DashboardSideBarHeader = ({ children }: PropsWithChildren) => {
+  return <h2 className="mb-2 text-xs font-semibold">{children}</h2>;
+};
+
+const DashboardSideBarLink = (props: DashboardSidebarItemProps) => {
+  return (
+    <Link
+      {...props}
+      href={props.href}
+      className={cn(
+        "flex items-center gap-2 rounded px-4 py-3 text-sm font-medium transition-all hover:bg-accent-foreground hover:text-accent",
+        props.className,
+      )}
+    >
+      {props.icon}
+      <span className="truncate">{props.children}</span>
+    </Link>
   );
 };
 
@@ -100,13 +109,15 @@ const ResponsiveWrapper = ({ children }: PropsWithChildren) => {
   if (!isDesktop)
     return (
       <Sheet onOpenChange={toggleSideBar} open={sideBarToggled}>
-        <SheetContent side={"left"}>{children}</SheetContent>
+        <SheetContent className="no-scrollbar overflow-y-scroll" side={"left"}>
+          {children}
+        </SheetContent>
       </Sheet>
     );
   return (
     <nav
       className={cn(
-        "hidden min-w-[300px] flex-col border-r border-r-border bg-muted p-4 md:flex",
+        "hidden min-w-[300px] flex-col border-r border-r-border p-4 md:flex",
       )}
     >
       {children}

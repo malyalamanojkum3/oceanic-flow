@@ -8,81 +8,42 @@ import {
   primaryKey,
   text,
   timestamp,
+  uniqueIndex,
   varchar,
 } from "drizzle-orm/pg-core";
 import { type AdapterAccount } from "next-auth/adapters";
-
-// make sure to check out /server/auth.ts to sync roles
-export const rolesEnum = pgEnum("role", ["admin", "manager", "viewer"]);
+import { organizations } from "./organization";
 
 /**
  * This is an example of how to use the multi-project schema feature of Drizzle ORM. Use the same
  * database instance for multiple projects.
  *
  * @see https://orm.drizzle.team/docs/goodies#multi-project-schema
+ *
  */
+
 export const createTable = pgTableCreator((name) => `oceanic-flow_${name}`);
 
-export const organizations = createTable("organization", {
-  id: varchar("id").notNull().primaryKey(),
-  name: varchar("name", { length: 255 }).notNull(),
-  createdAt: timestamp("createdAt", {
-    mode: "date",
-  })
-    .default(sql`CURRENT_TIMESTAMP`)
-    .notNull(),
-  ownerId: varchar("ownerId", { length: 255 })
-    .notNull()
-    .references(() => users.id),
-});
+export const organizationsData = createTable("organization_data", {});
 
-export const organizationsRelations = relations(organizations, ({ one }) => ({
-  owner: one(users, {
-    fields: [organizations.ownerId],
-    references: [users.id],
-  }),
-}));
-
-export const usersToOrganizations = createTable(
-  "users_to_organizations",
+export const users = createTable(
+  "user",
   {
-    userId: varchar("userId")
-      .notNull()
-      .references(() => users.id),
-    organizationId: varchar("organizationId")
-      .notNull()
-      .references(() => organizations.id),
-    role: rolesEnum("role").default("viewer").notNull(),
+    id: varchar("id", { length: 255 }).notNull().primaryKey(),
+    name: varchar("name", { length: 255 }),
+    email: varchar("email", { length: 255 }).notNull(),
+    emailVerified: timestamp("emailVerified", {
+      mode: "date",
+    }).default(sql`CURRENT_TIMESTAMP`),
+    image: varchar("image", { length: 255 }),
+    hasOnboarded: boolean("hasOnboarded").default(false).notNull(),
   },
-  (t) => ({
-    pk: primaryKey({ columns: [t.userId, t.organizationId] }),
-  }),
+  (table) => {
+    return {
+      emailIdx: uniqueIndex("email_idx").on(table.email),
+    };
+  },
 );
-
-export const usersToOrganizationsRelations = relations(
-  usersToOrganizations,
-  ({ one }) => ({
-    organizations: one(organizations, {
-      fields: [usersToOrganizations.organizationId],
-      references: [organizations.id],
-    }),
-    user: one(users, {
-      fields: [usersToOrganizations.userId],
-      references: [users.id],
-    }),
-  }),
-);
-
-export const users = createTable("user", {
-  id: varchar("id", { length: 255 }).notNull().primaryKey(),
-  name: varchar("name", { length: 255 }),
-  email: varchar("email", { length: 255 }).notNull(),
-  emailVerified: timestamp("emailVerified", {
-    mode: "date",
-  }).default(sql`CURRENT_TIMESTAMP`),
-  image: varchar("image", { length: 255 }),
-  hasOnboarded: boolean("hasOnboarded").default(false).notNull(),
-});
 
 export const usersRelations = relations(users, ({ many }) => ({
   accounts: many(accounts),

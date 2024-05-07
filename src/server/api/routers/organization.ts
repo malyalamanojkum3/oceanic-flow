@@ -1,10 +1,14 @@
 import { createTRPCRouter, protectedProcedure } from "../trpc";
-import { organizations, users, usersToOrganizations } from "@/server/db/schema";
+import {
+  organizations,
+  usersToOrganizations,
+} from "@/server/db/schema/organization";
 import { customAlphabet } from "nanoid";
 import { eq } from "drizzle-orm";
 import { z } from "zod";
 import slugify from "slugify";
 import { TRPCError } from "@trpc/server";
+import { users } from "@/server/db/schema/auth";
 
 const nanoid = customAlphabet("abcdefghijklmnopqrstuvxyz0123456789", 14);
 
@@ -39,6 +43,19 @@ export const organizationRouter = createTRPCRouter({
       },
     });
   }),
+  getOrgById: protectedProcedure
+    .input(z.object({ id: z.string().trim() }))
+    .query(async ({ input, ctx }) => {
+      const res = await ctx.db.query.organizations.findFirst({
+        where: (orgs, { eq }) => eq(orgs.id, input.id),
+      });
+      if (!res)
+        throw new TRPCError({
+          code: "INTERNAL_SERVER_ERROR",
+          message: "Id not found.",
+        });
+      return res;
+    }),
   finishOnboarding: protectedProcedure
     .input(z.object({ name: z.string().trim() }))
     .mutation(async ({ ctx, input }) => {

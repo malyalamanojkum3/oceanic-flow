@@ -6,13 +6,11 @@ import {
   getServerSession,
 } from "next-auth";
 import { type Adapter } from "next-auth/adapters";
-import Discord from "next-auth/providers/discord";
 import Google from "next-auth/providers/google";
 
 import { env } from "@/env";
 import { db } from "@/server/db";
-import { createTable } from "@/server/db/schema";
-import { logger } from "@/lib/logging/winston";
+import { createTable } from "@/server/db/schema/auth";
 
 /**
  * Module augmentation for `next-auth` types. Allows us to add custom properties to the `session`
@@ -47,36 +45,22 @@ export const authOptions: NextAuthOptions = {
   },
   callbacks: {
     async session({ session, user }) {
-      logger.info({
-        message: `Fetching role form database for user ${user.id}`,
-        service: "auth",
-        timestamp: new Date(),
-      });
       const dbUser = await db.query.users.findFirst({
         where: (users, { eq }) => eq(users.id, user.id),
       });
 
       if (!dbUser) {
-        logger.error({
-          message: `Error while fetching ${user.id}`,
-          service: "auth",
-          timestamp: new Date(),
-        });
         throw Error("Could not make session.");
       }
 
-      session.user.hasOnboarded = dbUser.hasOnboarded;
       session.user.id = user.id;
+      session.user.hasOnboarded = dbUser.hasOnboarded;
 
       return session;
     },
   },
   adapter: DrizzleAdapter(db, createTable) as Adapter,
   providers: [
-    Discord({
-      clientId: env.DISCORD_CLIENT_ID,
-      clientSecret: env.DISCORD_CLIENT_SECRET,
-    }),
     Google({
       clientId: env.GOOGLE_CLIENT_ID,
       clientSecret: env.GOOGLE_CLIENT_SECRET,

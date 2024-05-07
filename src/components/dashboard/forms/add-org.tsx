@@ -28,12 +28,14 @@ const AddOrganizationForm = () => {
   const mutation = api.orgs.create.useMutation({
     onSuccess: async () => {
       toast.success(`Created organization succesfully.`);
-      await utils.orgs.invalidate();
     },
     onError: () => {
       toast.error(
         `An error occured while creating your organization. Please try again later.`,
       );
+    },
+    onSettled: async () => {
+      await utils.orgs.getUserOrgs.invalidate();
     },
   });
 
