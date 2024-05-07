@@ -1,12 +1,4 @@
-import {
-  pgEnum,
-  pgTableCreator,
-  primaryKey,
-  timestamp,
-  serial,
-  varchar,
-} from "drizzle-orm/pg-core";
-import { relations, sql } from "drizzle-orm";
+import { pgEnum, pgTableCreator, serial, varchar } from "drizzle-orm/pg-core";
 
 const createTable = pgTableCreator((name) => `oceanic-flow_${name}`);
 

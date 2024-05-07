@@ -3,7 +3,6 @@ import {
   boolean,
   index,
   integer,
-  pgEnum,
   pgTableCreator,
   primaryKey,
   text,

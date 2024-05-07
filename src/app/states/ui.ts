@@ -1,5 +1,5 @@
 import { create } from "zustand";
-import { RouterOutputs, api } from "@/trpc/react";
+import { type RouterOutputs } from "@/trpc/react";
 
 interface UIState {
   sideBarToggled: boolean;
