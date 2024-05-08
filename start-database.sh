@@ -9,7 +9,7 @@
 
 # On Linux and macOS you can run this script directly - `./start-database.sh`
 
-DB_CONTAINER_NAME="oceanic-flow-postgres"
+DB_CONTAINER_NAME="oceanic-flow-postgres-supabase"
 
 if ! [ -x "$(command -v docker)" ]; then
   echo -e "Docker is not installed. Please install docker and try again.\nDocker install guide: https://docs.docker.com/engine/install/"
@@ -50,4 +50,4 @@ docker run -d \
   -e POSTGRES_PASSWORD="$DB_PASSWORD" \
   -e POSTGRES_DB=. \
   -p 5432:5432 \
-  docker.io/postgres && echo "Database container '$DB_CONTAINER_NAME' was successfully created"
+  docker.io/supabase/postgres && echo "Database container '$DB_CONTAINER_NAME' was successfully created"
