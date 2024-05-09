@@ -5,8 +5,7 @@ import { api } from "@/trpc/react";
 import { type PropsWithChildren } from "react";
 import { useShallow } from "zustand/react/shallow";
 
-const DarhboardOrgLayout = ({
-  children,
+const DashboardOrgPage = ({
   params,
 }: PropsWithChildren & { params: { orgId: string } }) => {
   const { setCurrentOrgId, setCurrentOrg } = useUIStore(
@@ -19,8 +18,6 @@ const DarhboardOrgLayout = ({
 
   const currentOrg = api.orgs.getOrgById.useQuery({ id: params.orgId }).data;
   if (currentOrg) setCurrentOrg(currentOrg);
-
-  return <>{children}</>;
+  return <></>;
 };
-
-export default DarhboardOrgLayout;
+export default DashboardOrgPage;

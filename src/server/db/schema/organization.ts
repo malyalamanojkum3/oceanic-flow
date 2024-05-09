@@ -8,8 +8,6 @@ import {
 import { relations, sql } from "drizzle-orm";
 import { users } from "./auth";
 
-// import { createTable } from "@/server/db/schema/auth";
-
 export const rolesEnum = pgEnum("role", ["admin", "manager", "viewer"]);
 
 const createTable = pgTableCreator((name) => `oceanic-flow_${name}`);
@@ -24,7 +22,7 @@ export const organizations = createTable("organization", {
     .notNull(),
   ownerId: varchar("ownerId", { length: 255 })
     .notNull()
-    .references(() => users.id),
+    .references(() => users.id, { onDelete: "cascade" }),
 });
 
 export const organizationsRelations = relations(organizations, ({ one }) => ({
@@ -39,10 +37,10 @@ export const usersToOrganizations = createTable(
   {
     userId: varchar("userId")
       .notNull()
-      .references(() => users.id),
+      .references(() => users.id, { onDelete: "cascade" }),
     organizationId: varchar("organizationId")
       .notNull()
-      .references(() => organizations.id),
+      .references(() => organizations.id, { onDelete: "cascade" }),
     role: rolesEnum("role").default("viewer").notNull(),
   },
   (t) => ({

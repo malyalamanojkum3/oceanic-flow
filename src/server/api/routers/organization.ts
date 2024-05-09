@@ -56,6 +56,28 @@ export const organizationRouter = createTRPCRouter({
         });
       return res;
     }),
+  isUserOrg: protectedProcedure
+    .input(z.object({ orgId: z.string().trim() }))
+    .query(async ({ ctx, input }) => {
+      const userOrgs = await ctx.db.query.users.findFirst({
+        where: (users, { eq }) => eq(users.id, ctx.session.user.id),
+        columns: {},
+        with: { organizations: true },
+      });
+      if (!userOrgs)
+        throw new TRPCError({
+          code: "INTERNAL_SERVER_ERROR",
+          message: "Fatal error, user doesn't have any organizations.",
+        });
+      let response = false;
+      for (const org of userOrgs.organizations) {
+        if (org.id === input.orgId) {
+          response = true;
+          break;
+        }
+      }
+      return response;
+    }),
   finishOnboarding: protectedProcedure
     .input(z.object({ name: z.string().trim() }))
     .mutation(async ({ ctx, input }) => {

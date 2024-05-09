@@ -25,11 +25,14 @@ export const onboardingSchema = z.object({
 });
 
 const DashboardOnboardingForm = () => {
-  const mutateOnboarding = api.orgs.finishOnboarding.useMutation({});
   const router = useRouter();
+  const mutateOnboarding = api.orgs.finishOnboarding.useMutation({
+    onSettled: () => {
+      router.push("/dashboard");
+    },
+  });
   const onSubmit = (values: z.infer<typeof onboardingSchema>) => {
     mutateOnboarding.mutate({ name: values.organizationName });
-    router.push("/dashboard");
   };
 
   const form = useForm<z.infer<typeof onboardingSchema>>({

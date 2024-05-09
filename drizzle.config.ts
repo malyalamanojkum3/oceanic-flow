@@ -4,10 +4,10 @@ import { env } from "@/env";
 
 export default {
   schema: "./src/server/db/schema/**/*.ts",
-  driver: "pg",
+  dialect: "postgresql",
   out: "./drizzle",
   dbCredentials: {
-    connectionString: env.DATABASE_URL,
+    url: env.DATABASE_URL,
   },
   tablesFilter: ["oceanic-flow_*"],
 } satisfies Config;
