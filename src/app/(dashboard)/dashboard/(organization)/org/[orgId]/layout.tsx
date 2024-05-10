@@ -2,6 +2,7 @@
 
 import { useUIStore } from "@/app/states/ui";
 import { api } from "@/trpc/react";
+import { Loader2 } from "lucide-react";
 import { useRouter } from "next/navigation";
 import { type PropsWithChildren } from "react";
 import { useShallow } from "zustand/react/shallow";
@@ -32,7 +33,12 @@ const DarhboardOrgLayout = ({
   setCurrentOrgId(params.orgId);
   if (currentOrg.data) setCurrentOrg(currentOrg.data);
 
-  if (isAllowed.isLoading) return <div>Loading...</div>;
+  if (isAllowed.isLoading)
+    return (
+      <div className="grid h-full w-full items-center justify-center">
+        <Loader2 className="animate-spin" />
+      </div>
+    );
 
   return <>{children}</>;
 };

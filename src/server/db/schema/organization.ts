@@ -8,8 +8,10 @@ import {
 import { relations, sql } from "drizzle-orm";
 import { users } from "./auth";
 
-export const rolesEnum = pgEnum("role", ["admin", "manager", "viewer"]);
+const roles = ["admin", "manager", "viewer"] as const;
+export type Roles = (typeof roles)[number];
 
+export const rolesEnum = pgEnum("role", roles);
 const createTable = pgTableCreator((name) => `oceanic-flow_${name}`);
 
 export const organizations = createTable("organization", {

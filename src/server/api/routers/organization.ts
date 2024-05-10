@@ -59,10 +59,9 @@ export const organizationRouter = createTRPCRouter({
   isUserOrg: protectedProcedure
     .input(z.object({ orgId: z.string().trim() }))
     .query(async ({ ctx, input }) => {
-      const userOrgs = await ctx.db.query.users.findFirst({
-        where: (users, { eq }) => eq(users.id, ctx.session.user.id),
-        columns: {},
-        with: { organizations: true },
+      const userOrgs = await ctx.db.query.usersToOrganizations.findMany({
+        where: (usersToOrgs, { eq }) =>
+          eq(usersToOrgs.userId, ctx.session.user.id),
       });
       if (!userOrgs)
         throw new TRPCError({
@@ -70,8 +69,8 @@ export const organizationRouter = createTRPCRouter({
           message: "Fatal error, user doesn't have any organizations.",
         });
       let response = false;
-      for (const org of userOrgs.organizations) {
-        if (org.id === input.orgId) {
+      for (const org of userOrgs) {
+        if (org.organizationId === input.orgId) {
           response = true;
           break;
         }
