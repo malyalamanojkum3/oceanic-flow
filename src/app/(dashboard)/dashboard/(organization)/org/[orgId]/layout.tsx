@@ -1,17 +1,17 @@
 "use client";
 
-import { useUIStore } from "@/app/states/ui";
+import { uiStore } from "@/app/states/ui";
 import { api } from "@/trpc/react";
 import { Loader2 } from "lucide-react";
 import { useRouter } from "next/navigation";
 import { type PropsWithChildren } from "react";
-import { useShallow } from "zustand/react/shallow";
 
-const DarhboardOrgLayout = ({
+const DashboardOrgLayout = ({
   children,
   params,
 }: PropsWithChildren & { params: { orgId: string } }) => {
   const router = useRouter();
+  uiStore.set.currentOrgId(params.orgId);
 
   const isAllowed = api.orgs.isUserOrg.useQuery({ orgId: params.orgId });
 
@@ -19,19 +19,13 @@ const DarhboardOrgLayout = ({
     router.push("/dashboard");
   }
 
-  const currentOrg = api.orgs.getOrgById.useQuery(
-    { id: params.orgId },
-    { enabled: isAllowed.data },
-  );
-
-  const { setCurrentOrgId, setCurrentOrg } = useUIStore(
-    useShallow((state) => ({
-      setCurrentOrgId: state.setCurrentOrgId,
-      setCurrentOrg: state.setCurrentOrg,
-    })),
-  );
-  setCurrentOrgId(params.orgId);
-  if (currentOrg.data) setCurrentOrg(currentOrg.data);
+  if (uiStore.get.currentOrgId() !== params.orgId || !!uiStore.get.currentOrg) {
+    const currentOrg = api.orgs.getOrgById.useQuery(
+      { id: params.orgId },
+      { enabled: isAllowed.data },
+    ).data;
+    if (currentOrg) uiStore.set.currentOrg(currentOrg);
+  }
 
   if (isAllowed.isLoading)
     return (
@@ -43,4 +37,4 @@ const DarhboardOrgLayout = ({
   return <>{children}</>;
 };
 
-export default DarhboardOrgLayout;
+export default DashboardOrgLayout;

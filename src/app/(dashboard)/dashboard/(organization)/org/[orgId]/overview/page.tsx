@@ -1,14 +1,9 @@
 "use client";
 
-import { useUIStore } from "@/app/states/ui";
-import { useShallow } from "zustand/react/shallow";
+import { uiStore } from "@/app/states/ui";
 
 const DashboardOrgOverview = () => {
-  const { currentOrg } = useUIStore(
-    useShallow((state) => ({
-      currentOrg: state.currentOrg,
-    })),
-  );
+  const currentOrg = uiStore.get.currentOrg();
   if (!currentOrg) <div>error</div>;
   return (
     <div>

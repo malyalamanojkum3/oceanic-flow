@@ -1,8 +1,10 @@
-import DashboardSideBar from "@/components/dashboard/side-bar";
+import dynamic from "next/dynamic";
+
 import DashboardTopBar from "@/components/dashboard/top-bar";
 import { getServerAuthSession } from "@/server/auth";
 import { redirect } from "next/navigation";
 import { type ReactNode } from "react";
+import DashboardSideBar from "@/components/dashboard/side-bar";
 
 type Props = {
   children: ReactNode;

@@ -23,21 +23,14 @@ import { ChevronsUpDown, Loader2 } from "lucide-react";
 import Image from "next/image";
 
 import { api } from "@/trpc/react";
-import { useUIStore } from "@/app/states/ui";
-import { useShallow } from "zustand/react/shallow";
+import { uiStore } from "@/app/states/ui";
 
 const SelectOrganizationsDropdown = () => {
-  const { currentOrgId, toggleSideBar } = useUIStore(
-    useShallow((state) => ({
-      currentOrgId: state.currentOrgId,
-      toggleSideBar: state.toggleSideBar,
-    })),
-  );
+  const currentOrg = uiStore.get.currentOrg();
+  const toggle = uiStore.get.sideBarToggled();
+
   const queryOrgs = api.orgs.getUserOrgs.useQuery();
-  const currentOrg = api.orgs.getOrgById.useQuery(
-    { id: currentOrgId },
-    { enabled: !!currentOrgId },
-  ).data;
+
   return (
     <Credenza>
       <DropdownMenu>
@@ -70,7 +63,7 @@ const SelectOrganizationsDropdown = () => {
           )}
           {queryOrgs.data?.map(({ role, organizations: { id, name } }) => (
             <Link
-              onClick={toggleSideBar}
+              onClick={() => uiStore.set.sideBarToggled(!toggle)}
               key={id}
               href={{
                 pathname: `/dashboard/org/${id}/overview`,

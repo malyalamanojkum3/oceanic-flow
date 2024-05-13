@@ -26,9 +26,9 @@ import {
   SelectItem,
   SelectTrigger,
 } from "@/components/primitives/select";
-import { useUIStore } from "@/app/states/ui";
 import { useShallow } from "zustand/react/shallow";
 import { toast } from "sonner";
+import { uiStore } from "@/app/states/ui";
 
 const addUserSchema = z.object({
   email: z.string().email(),
@@ -52,15 +52,14 @@ const DashboardOrgSettingsPage = () => {
   const [select, setSelect] = useState<boolean>(false);
   const [value, setValue] = useState<Roles>("viewer");
 
-  const { currentOrgId } = useUIStore(
-    useShallow((state) => ({
-      currentOrgId: state.currentOrgId,
-    })),
-  );
+  const currentOrgId = uiStore.get.currentOrgId();
 
   const userToOrgMutation = api.users.addUserToOrg.useMutation({
     onSuccess: () => {
       toast.success("Added user successfully.");
+    },
+    onError: () => {
+      toast.error("Internal server error, please try again later.");
     },
   });
 
@@ -150,13 +149,14 @@ const DashboardOrgSettingsPage = () => {
             )}
           />
           <Button
-            onClick={() =>
+            onClick={(e) => {
+              e.preventDefault();
               userToOrgMutation.mutate({
                 email: form.getValues("email"),
                 orgId: currentOrgId,
                 role: value,
-              })
-            }
+              });
+            }}
             className="w-full"
             type="submit"
           >

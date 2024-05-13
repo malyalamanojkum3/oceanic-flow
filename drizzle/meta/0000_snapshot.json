@@ -1,10 +1,10 @@
 {
-  "id": "68b8bd92-e8b3-4c43-89f9-e57da43a6e41",
+  "id": "2c243982-5710-430f-b670-f62fadd35841",
   "prevId": "00000000-0000-0000-0000-000000000000",
-  "version": "5",
-  "dialect": "pg",
+  "version": "6",
+  "dialect": "postgresql",
   "tables": {
-    "oceanic-flow_account": {
+    "public.oceanic-flow_account": {
       "name": "oceanic-flow_account",
       "schema": "",
       "columns": {
@@ -95,7 +95,7 @@
           "columnsTo": [
             "id"
           ],
-          "onDelete": "no action",
+          "onDelete": "cascade",
           "onUpdate": "no action"
         }
       },
@@ -110,7 +110,7 @@
       },
       "uniqueConstraints": {}
     },
-    "oceanic-flow_organization_data": {
+    "public.oceanic-flow_organization_data": {
       "name": "oceanic-flow_organization_data",
       "schema": "",
       "columns": {},
@@ -119,7 +119,7 @@
       "compositePrimaryKeys": {},
       "uniqueConstraints": {}
     },
-    "oceanic-flow_session": {
+    "public.oceanic-flow_session": {
       "name": "oceanic-flow_session",
       "schema": "",
       "columns": {
@@ -162,14 +162,14 @@
           "columnsTo": [
             "id"
           ],
-          "onDelete": "no action",
+          "onDelete": "cascade",
           "onUpdate": "no action"
         }
       },
       "compositePrimaryKeys": {},
       "uniqueConstraints": {}
     },
-    "oceanic-flow_user": {
+    "public.oceanic-flow_user": {
       "name": "oceanic-flow_user",
       "schema": "",
       "columns": {
@@ -225,7 +225,7 @@
       "compositePrimaryKeys": {},
       "uniqueConstraints": {}
     },
-    "oceanic-flow_verificationToken": {
+    "public.oceanic-flow_verificationToken": {
       "name": "oceanic-flow_verificationToken",
       "schema": "",
       "columns": {
@@ -261,7 +261,7 @@
       },
       "uniqueConstraints": {}
     },
-    "oceanic-flow_organization": {
+    "public.oceanic-flow_organization": {
       "name": "oceanic-flow_organization",
       "schema": "",
       "columns": {
@@ -303,14 +303,14 @@
           "columnsTo": [
             "id"
           ],
-          "onDelete": "no action",
+          "onDelete": "cascade",
           "onUpdate": "no action"
         }
       },
       "compositePrimaryKeys": {},
       "uniqueConstraints": {}
     },
-    "oceanic-flow_users_to_organizations": {
+    "public.oceanic-flow_users_to_organizations": {
       "name": "oceanic-flow_users_to_organizations",
       "schema": "",
       "columns": {
@@ -329,6 +329,7 @@
         "role": {
           "name": "role",
           "type": "role",
+          "typeSchema": "public",
           "primaryKey": false,
           "notNull": true,
           "default": "'viewer'"
@@ -346,7 +347,7 @@
           "columnsTo": [
             "id"
           ],
-          "onDelete": "no action",
+          "onDelete": "cascade",
           "onUpdate": "no action"
         },
         "oceanic-flow_users_to_organizations_organizationId_oceanic-flow_organization_id_fk": {
@@ -359,7 +360,7 @@
           "columnsTo": [
             "id"
           ],
-          "onDelete": "no action",
+          "onDelete": "cascade",
           "onUpdate": "no action"
         }
       },
@@ -374,19 +375,20 @@
       },
       "uniqueConstraints": {}
     },
-    "oceanic-flow_supplier": {
+    "public.oceanic-flow_supplier": {
       "name": "oceanic-flow_supplier",
       "schema": "",
       "columns": {
         "id": {
           "name": "id",
           "type": "serial",
-          "primaryKey": false,
+          "primaryKey": true,
           "notNull": true
         },
         "type": {
           "name": "type",
           "type": "type",
+          "typeSchema": "public",
           "primaryKey": false,
           "notNull": true,
           "default": "'supplier'"
@@ -395,43 +397,37 @@
           "name": "name",
           "type": "varchar(255)",
           "primaryKey": false,
-          "notNull": false
+          "notNull": true
         },
         "email": {
           "name": "email",
           "type": "varchar(255)",
           "primaryKey": false,
-          "notNull": false
+          "notNull": true
         },
         "countryCode": {
           "name": "countryCode",
           "type": "varchar(8)",
           "primaryKey": false,
-          "notNull": false
-        },
-        "phoneCountryCode": {
-          "name": "phoneCountryCode",
-          "type": "varchar(8)",
-          "primaryKey": false,
-          "notNull": false
+          "notNull": true
         },
         "phone": {
           "name": "phone",
           "type": "varchar(15)",
           "primaryKey": false,
-          "notNull": false
+          "notNull": true
         },
         "address": {
           "name": "address",
           "type": "varchar(255)",
           "primaryKey": false,
-          "notNull": false
+          "notNull": true
         },
         "bank": {
           "name": "bank",
           "type": "varchar(255)",
           "primaryKey": false,
-          "notNull": false
+          "notNull": true
         }
       },
       "indexes": {},
@@ -441,20 +437,22 @@
     }
   },
   "enums": {
-    "role": {
+    "public.role": {
       "name": "role",
-      "values": {
-        "admin": "admin",
-        "manager": "manager",
-        "viewer": "viewer"
-      }
+      "schema": "public",
+      "values": [
+        "admin",
+        "manager",
+        "viewer"
+      ]
     },
-    "type": {
+    "public.type": {
       "name": "type",
-      "values": {
-        "supplier": "supplier",
-        "broker": "broker"
-      }
+      "schema": "public",
+      "values": [
+        "supplier",
+        "broker"
+      ]
     }
   },
   "schemas": {},

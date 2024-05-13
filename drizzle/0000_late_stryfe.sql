@@ -1,11 +1,11 @@
 DO $$ BEGIN
- CREATE TYPE "role" AS ENUM('admin', 'manager', 'viewer');
+ CREATE TYPE "public"."role" AS ENUM('admin', 'manager', 'viewer');
 EXCEPTION
  WHEN duplicate_object THEN null;
 END $$;
 --> statement-breakpoint
 DO $$ BEGIN
- CREATE TYPE "type" AS ENUM('supplier', 'broker');
+ CREATE TYPE "public"."type" AS ENUM('supplier', 'broker');
 EXCEPTION
  WHEN duplicate_object THEN null;
 END $$;
@@ -66,46 +66,46 @@ CREATE TABLE IF NOT EXISTS "oceanic-flow_users_to_organizations" (
 );
 --> statement-breakpoint
 CREATE TABLE IF NOT EXISTS "oceanic-flow_supplier" (
-	"id" serial NOT NULL,
+	"id" serial PRIMARY KEY NOT NULL,
 	"type" "type" DEFAULT 'supplier' NOT NULL,
-	"name" varchar(255),
-	"email" varchar(255),
-	"countryCode" varchar(8),
-	"phoneCountryCode" varchar(8),
-	"phone" varchar(15),
-	"address" varchar(255),
-	"bank" varchar(255)
+	"name" varchar(255) NOT NULL,
+	"email" varchar(255) NOT NULL,
+	"countryCode" varchar(8) NOT NULL,
+	"phone" varchar(15) NOT NULL,
+	"address" varchar(255) NOT NULL,
+	"bank" varchar(255) NOT NULL
 );
+--> statement-breakpoint
+DO $$ BEGIN
+ ALTER TABLE "oceanic-flow_account" ADD CONSTRAINT "oceanic-flow_account_userId_oceanic-flow_user_id_fk" FOREIGN KEY ("userId") REFERENCES "public"."oceanic-flow_user"("id") ON DELETE cascade ON UPDATE no action;
+EXCEPTION
+ WHEN duplicate_object THEN null;
+END $$;
+--> statement-breakpoint
+DO $$ BEGIN
+ ALTER TABLE "oceanic-flow_session" ADD CONSTRAINT "oceanic-flow_session_userId_oceanic-flow_user_id_fk" FOREIGN KEY ("userId") REFERENCES "public"."oceanic-flow_user"("id") ON DELETE cascade ON UPDATE no action;
+EXCEPTION
+ WHEN duplicate_object THEN null;
+END $$;
+--> statement-breakpoint
+DO $$ BEGIN
+ ALTER TABLE "oceanic-flow_organization" ADD CONSTRAINT "oceanic-flow_organization_ownerId_oceanic-flow_user_id_fk" FOREIGN KEY ("ownerId") REFERENCES "public"."oceanic-flow_user"("id") ON DELETE cascade ON UPDATE no action;
+EXCEPTION
+ WHEN duplicate_object THEN null;
+END $$;
+--> statement-breakpoint
+DO $$ BEGIN
+ ALTER TABLE "oceanic-flow_users_to_organizations" ADD CONSTRAINT "oceanic-flow_users_to_organizations_userId_oceanic-flow_user_id_fk" FOREIGN KEY ("userId") REFERENCES "public"."oceanic-flow_user"("id") ON DELETE cascade ON UPDATE no action;
+EXCEPTION
+ WHEN duplicate_object THEN null;
+END $$;
+--> statement-breakpoint
+DO $$ BEGIN
+ ALTER TABLE "oceanic-flow_users_to_organizations" ADD CONSTRAINT "oceanic-flow_users_to_organizations_organizationId_oceanic-flow_organization_id_fk" FOREIGN KEY ("organizationId") REFERENCES "public"."oceanic-flow_organization"("id") ON DELETE cascade ON UPDATE no action;
+EXCEPTION
+ WHEN duplicate_object THEN null;
+END $$;
 --> statement-breakpoint
 CREATE INDEX IF NOT EXISTS "account_userId_idx" ON "oceanic-flow_account" ("userId");--> statement-breakpoint
 CREATE INDEX IF NOT EXISTS "session_userId_idx" ON "oceanic-flow_session" ("userId");--> statement-breakpoint
-CREATE UNIQUE INDEX IF NOT EXISTS "email_idx" ON "oceanic-flow_user" ("email");--> statement-breakpoint
-DO $$ BEGIN
- ALTER TABLE "oceanic-flow_account" ADD CONSTRAINT "oceanic-flow_account_userId_oceanic-flow_user_id_fk" FOREIGN KEY ("userId") REFERENCES "oceanic-flow_user"("id") ON DELETE no action ON UPDATE no action;
-EXCEPTION
- WHEN duplicate_object THEN null;
-END $$;
---> statement-breakpoint
-DO $$ BEGIN
- ALTER TABLE "oceanic-flow_session" ADD CONSTRAINT "oceanic-flow_session_userId_oceanic-flow_user_id_fk" FOREIGN KEY ("userId") REFERENCES "oceanic-flow_user"("id") ON DELETE no action ON UPDATE no action;
-EXCEPTION
- WHEN duplicate_object THEN null;
-END $$;
---> statement-breakpoint
-DO $$ BEGIN
- ALTER TABLE "oceanic-flow_organization" ADD CONSTRAINT "oceanic-flow_organization_ownerId_oceanic-flow_user_id_fk" FOREIGN KEY ("ownerId") REFERENCES "oceanic-flow_user"("id") ON DELETE no action ON UPDATE no action;
-EXCEPTION
- WHEN duplicate_object THEN null;
-END $$;
---> statement-breakpoint
-DO $$ BEGIN
- ALTER TABLE "oceanic-flow_users_to_organizations" ADD CONSTRAINT "oceanic-flow_users_to_organizations_userId_oceanic-flow_user_id_fk" FOREIGN KEY ("userId") REFERENCES "oceanic-flow_user"("id") ON DELETE no action ON UPDATE no action;
-EXCEPTION
- WHEN duplicate_object THEN null;
-END $$;
---> statement-breakpoint
-DO $$ BEGIN
- ALTER TABLE "oceanic-flow_users_to_organizations" ADD CONSTRAINT "oceanic-flow_users_to_organizations_organizationId_oceanic-flow_organization_id_fk" FOREIGN KEY ("organizationId") REFERENCES "oceanic-flow_organization"("id") ON DELETE no action ON UPDATE no action;
-EXCEPTION
- WHEN duplicate_object THEN null;
-END $$;
+CREATE UNIQUE INDEX IF NOT EXISTS "email_idx" ON "oceanic-flow_user" ("email");

@@ -1,9 +1,9 @@
 "use client";
 
-import { type ReactNode, type PropsWithChildren } from "react";
+import { type ReactNode, type PropsWithChildren, useEffect } from "react";
 
 import { useMediaQuery } from "@/lib/hooks/use-media-query";
-import { useUIStore } from "@/app/states/ui";
+import { uiStore } from "@/app/states/ui";
 import { cn } from "@/lib/utils";
 
 import { Sheet, SheetContent } from "../primitives/sheet";
@@ -11,8 +11,6 @@ import { Sheet, SheetContent } from "../primitives/sheet";
 import { usePathname } from "next/navigation";
 import SelectOrganizationsDropdown from "./select-orgs";
 import Link from "next/link";
-
-import { useShallow } from "zustand/react/shallow";
 import slugify from "slugify";
 
 import { primaryDataSource } from "@/lib/psd";
@@ -22,12 +20,9 @@ const orgUrl = "/dashboard/org";
 
 const DashboardSideBar = () => {
   const pathname = usePathname();
-  const { currentOrgId, toggleSideBar } = useUIStore(
-    useShallow((state) => ({
-      currentOrgId: state.currentOrgId,
-      toggleSideBar: state.toggleSideBar,
-    })),
-  );
+  const toggle = uiStore.use.sideBarToggled();
+  const currentOrgId = uiStore.useTracked.currentOrgId();
+
   if (!pathname.startsWith("/dashboard/")) return <></>;
   return (
     <ResponsiveWrapper>
@@ -36,7 +31,7 @@ const DashboardSideBar = () => {
       <div className="no-scrollbar space-y-4 overflow-y-scroll">
         <DashboardSideBarMenu>
           <DashboardSideBarLink
-            onClick={toggleSideBar}
+            onClick={() => uiStore.set.sideBarToggled(!toggle)}
             href={`/dashboard/org/${currentOrgId}/overview`}
             icon={<SquareDashedKanban />}
           >
@@ -48,7 +43,7 @@ const DashboardSideBar = () => {
           <div className="space-y-0.5">
             {primaryDataSource.map((source) => (
               <DashboardSideBarLink
-                onClick={toggleSideBar}
+                onClick={() => uiStore.set.sideBarToggled(!toggle)}
                 key={source.name}
                 href={`${orgUrl}/${currentOrgId}/${slugify(source.name, { lower: true, trim: true })}`}
                 icon={source.icon}
@@ -61,7 +56,7 @@ const DashboardSideBar = () => {
         <DashboardSideBarMenu>
           <DashboardSideBarHeader>Settings</DashboardSideBarHeader>
           <DashboardSideBarLink
-            onClick={toggleSideBar}
+            onClick={() => uiStore.set.sideBarToggled(!toggle)}
             href={`/dashboard/org/${currentOrgId}/settings`}
             icon={<UserRoundCog />}
           >
@@ -105,10 +100,13 @@ const DashboardSideBarLink = (props: DashboardSidebarItemProps) => {
 
 const ResponsiveWrapper = ({ children }: PropsWithChildren) => {
   const isDesktop = useMediaQuery("(min-width: 1024px)");
-  const { sideBarToggled, toggleSideBar } = useUIStore((state) => state);
+  const toggle = uiStore.use.sideBarToggled();
   if (!isDesktop)
     return (
-      <Sheet onOpenChange={toggleSideBar} open={sideBarToggled}>
+      <Sheet
+        onOpenChange={() => uiStore.set.sideBarToggled(!toggle)}
+        open={toggle}
+      >
         <SheetContent className="no-scrollbar overflow-y-scroll" side={"left"}>
           {children}
         </SheetContent>

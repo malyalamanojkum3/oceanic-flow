@@ -21,7 +21,7 @@ import { api } from "@/trpc/react";
 import { useRouter } from "next/navigation";
 
 export const onboardingSchema = z.object({
-  organizationName: z.string().min(2).max(32),
+  organizationName: z.string().min(2).max(32).trim(),
 });
 
 const DashboardOnboardingForm = () => {

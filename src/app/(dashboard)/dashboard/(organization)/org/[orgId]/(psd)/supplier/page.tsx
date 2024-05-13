@@ -1,4 +1,5 @@
-function PSDSupplierPage() {
-  return <div>suppkier</div>;
-}
+const PSDSupplierPage = () => {
+  return <div></div>;
+};
+
 export default PSDSupplierPage;

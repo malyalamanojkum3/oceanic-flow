@@ -1,12 +1,12 @@
 {
-  "version": "5",
-  "dialect": "pg",
+  "version": "6",
+  "dialect": "postgresql",
   "entries": [
     {
       "idx": 0,
-      "version": "5",
-      "when": 1715183281294,
-      "tag": "0000_magical_ego",
+      "version": "6",
+      "when": 1715561424345,
+      "tag": "0000_late_stryfe",
       "breakpoints": true
     }
   ]
