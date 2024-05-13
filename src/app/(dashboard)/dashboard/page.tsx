@@ -13,6 +13,7 @@ import moment from "moment";
 import { useRouter } from "next/navigation";
 import AddOrganizationCard from "@/components/dashboard/add-org-card";
 import { Skeleton } from "@/components/primitives/skeleton";
+import { uiStore } from "@/app/states/ui";
 
 const Dashboard = () => {
   const queryOrgs = api.orgs.getUserOrgs.useQuery();
@@ -33,7 +34,10 @@ const Dashboard = () => {
           {queryOrgs.data?.map(({ organizations: { name, createdAt, id } }) => (
             <Card
               key={id}
-              onClick={() => router.push(`/dashboard/org/${id}/overview`)}
+              onClick={() => {
+                router.push(`/dashboard/org/${id}/overview`);
+                uiStore.set.currentOrgId(id);
+              }}
               className="cursor-pointer bg-muted"
             >
               <CardHeader>

@@ -4,7 +4,7 @@ import postgres from "postgres";
 import { env } from "@/env";
 import * as auth from "./schema/auth";
 import * as organization from "./schema/organization";
-import * as psd from "./schema/psd";
+import { psd } from "./schema/psd";
 
 const schema = {
   ...auth,

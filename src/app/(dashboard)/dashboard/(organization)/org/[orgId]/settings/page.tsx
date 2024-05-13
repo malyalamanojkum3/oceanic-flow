@@ -50,7 +50,7 @@ const DashboardOrgSettingsPage = () => {
   );
 
   const [select, setSelect] = useState<boolean>(false);
-  const [value, setValue] = useState<Roles>("viewer");
+  const [role, setRole] = useState<Roles>("viewer");
 
   const currentOrgId = uiStore.get.currentOrgId();
 
@@ -63,6 +63,14 @@ const DashboardOrgSettingsPage = () => {
     },
   });
 
+  const onSubmit = (values: z.infer<typeof addUserSchema>) => {
+    userToOrgMutation.mutate({
+      email: values.email,
+      orgId: currentOrgId,
+      role: role,
+    });
+  };
+
   return (
     <div className="flex w-full flex-col space-y-8 md:flex-row md:space-x-8 md:space-y-0">
       <div className="w-full md:w-1/2">
@@ -73,7 +81,10 @@ const DashboardOrgSettingsPage = () => {
         </p>
       </div>
       <Form {...form}>
-        <form className="w-full space-y-2 md:w-1/2">
+        <form
+          onSubmit={form.handleSubmit(onSubmit)}
+          className="w-full space-y-2 md:w-1/2"
+        >
           <FormField
             control={form.control}
             name="email"
@@ -93,11 +104,11 @@ const DashboardOrgSettingsPage = () => {
                       placeholder="Search user by email..."
                     >
                       <Select
-                        value={value}
-                        onValueChange={(val) => setValue(val as Roles)}
+                        value={role}
+                        onValueChange={(val) => setRole(val as Roles)}
                       >
                         <SelectTrigger className="w-[160px] border-none capitalize">
-                          {value}
+                          {role}
                         </SelectTrigger>
                         <SelectContent className="w-[160px] outline-none">
                           <SelectItem value="viewer">Viewer</SelectItem>
@@ -148,18 +159,7 @@ const DashboardOrgSettingsPage = () => {
               </FormItem>
             )}
           />
-          <Button
-            onClick={(e) => {
-              e.preventDefault();
-              userToOrgMutation.mutate({
-                email: form.getValues("email"),
-                orgId: currentOrgId,
-                role: value,
-              });
-            }}
-            className="w-full"
-            type="submit"
-          >
+          <Button className="w-full" type="submit">
             Add user to organization
           </Button>
         </form>

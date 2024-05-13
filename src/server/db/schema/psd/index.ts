@@ -1,5 +1,5 @@
 import * as supplier from "./supplier";
 
-export const psdSchema = {
+export const psd = {
   ...supplier,
 };

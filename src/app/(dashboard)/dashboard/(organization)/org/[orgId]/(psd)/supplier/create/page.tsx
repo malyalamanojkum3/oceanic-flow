@@ -1,10 +1,10 @@
 import React from "react";
-import PSDSupplierForm from "./form";
+import PSDSupplierCreateForm from "./form";
 
 const PSDSupplierCreate = () => {
   return (
     <div className="mx-auto max-w-4xl">
-      <PSDSupplierForm />
+      <PSDSupplierCreateForm />
     </div>
   );
 };

@@ -32,31 +32,28 @@ import { api } from "@/trpc/react";
 import { insertSupplierSchema } from "@/server/api/routers/psd/schemas.zod";
 import { toast } from "sonner";
 import { useRouter } from "next/navigation";
-import { uiStore } from "@/app/states/ui";
-import { PhoneInput } from "@/components/primitives/phone-input";
 
-function PSDSupplierCreateForm() {
+function PSDSupplierEditForm({
+  defaultValues,
+}: {
+  defaultValues: z.infer<typeof insertSupplierSchema>;
+}) {
   const countries = useMemo(() => getCountryDataList(), []);
   const router = useRouter();
-  const currentOrgId = uiStore.get.currentOrgId();
+  const utils = api.useUtils();
 
   const form = useForm<z.infer<typeof insertSupplierSchema>>({
     resolver: zodResolver(insertSupplierSchema),
     defaultValues: {
-      type: "supplier",
-      name: undefined,
-      email: undefined,
-      countryCode: undefined,
-      phone: undefined,
-      address: undefined,
-      bank: undefined,
-      orgId: currentOrgId,
+      ...defaultValues,
+      type: defaultValues.type,
     },
   });
 
-  const create = api.supplier.create.useMutation({
+  const update = api.supplier.update.useMutation({
     onSuccess: () => {
-      toast.success("Supplier created successfully.");
+      toast.success("Supplier edited successfully.");
+
       router.push("./");
     },
     onError: () => {
@@ -64,8 +61,9 @@ function PSDSupplierCreateForm() {
     },
   });
 
-  const onSubmit = (values: z.infer<typeof insertSupplierSchema>) => {
-    create.mutate({ ...values, orgId: currentOrgId });
+  const onSubmit = async (values: z.infer<typeof insertSupplierSchema>) => {
+    update.mutate({ supplier: values });
+    await utils.supplier.getById.invalidate();
   };
 
   return (
@@ -159,12 +157,9 @@ function PSDSupplierCreateForm() {
             name="phone"
             render={({ field }) => (
               <FormItem className="space-y-1">
-                <FormLabel>Phone Number</FormLabel>
+                <FormLabel>Contact Number</FormLabel>
                 <FormControl>
-                  <PhoneInput
-                    placeholder="Phone Number"
-                    onChange={field.onChange}
-                  />
+                  <Input placeholder="1234-567-890" {...field} />
                 </FormControl>
                 <FormMessage />
               </FormItem>
@@ -196,10 +191,10 @@ function PSDSupplierCreateForm() {
               </FormItem>
             )}
           />
-          <Button type="submit">Create Supplier</Button>
+          <Button type="submit">Save changes</Button>
         </form>
       </Form>
     </>
   );
 }
-export default PSDSupplierCreateForm;
+export default PSDSupplierEditForm;
