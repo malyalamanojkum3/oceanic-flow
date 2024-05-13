@@ -1,5 +1,3 @@
-import dynamic from "next/dynamic";
-
 import DashboardTopBar from "@/components/dashboard/top-bar";
 import { getServerAuthSession } from "@/server/auth";
 import { redirect } from "next/navigation";

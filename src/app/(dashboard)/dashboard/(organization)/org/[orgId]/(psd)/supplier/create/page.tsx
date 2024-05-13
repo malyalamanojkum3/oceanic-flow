@@ -1,9 +1,7 @@
 import React from "react";
 import PSDSupplierForm from "./form";
 
-type Props = {};
-
-const PSDSupplierCreate = (props: Props) => {
+const PSDSupplierCreate = () => {
   return (
     <div className="mx-auto max-w-4xl">
       <PSDSupplierForm />

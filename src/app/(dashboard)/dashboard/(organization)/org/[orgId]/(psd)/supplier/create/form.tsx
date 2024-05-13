@@ -32,8 +32,6 @@ import { useMemo } from "react";
 import { toast } from "sonner";
 
 import * as v from "validator";
-import { ArrowLeft, ArrowUpLeftIcon } from "lucide-react";
-import Link from "next/link";
 
 function PSDSupplierCreateForm() {
   const countries = useMemo(() => getCountryDataList(), []);

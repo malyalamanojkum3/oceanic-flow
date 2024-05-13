@@ -1,6 +1,6 @@
 "use client";
 
-import { type ReactNode, type PropsWithChildren, useEffect } from "react";
+import { type ReactNode, type PropsWithChildren } from "react";
 
 import { useMediaQuery } from "@/lib/hooks/use-media-query";
 import { uiStore } from "@/app/states/ui";

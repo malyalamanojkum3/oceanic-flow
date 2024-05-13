@@ -26,7 +26,7 @@ import {
   SelectItem,
   SelectTrigger,
 } from "@/components/primitives/select";
-import { useShallow } from "zustand/react/shallow";
+
 import { toast } from "sonner";
 import { uiStore } from "@/app/states/ui";
 
