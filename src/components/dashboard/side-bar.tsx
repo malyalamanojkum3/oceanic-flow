@@ -9,19 +9,30 @@ import { cn } from "@/lib/utils";
 import { Sheet, SheetContent } from "../primitives/sheet";
 
 import { usePathname } from "next/navigation";
-import SelectOrganizationsDropdown from "./select-orgs";
 import Link from "next/link";
 import slugify from "slugify";
 
 import { primaryDataSource } from "@/lib/psd";
 import { SquareDashedKanban, UserRoundCog } from "lucide-react";
 
+import dynamic from "next/dynamic";
+import { Skeleton } from "../primitives/skeleton";
+
+const SelectOrganizationsDropdown = dynamic(() => import("./select-orgs"), {
+  ssr: false,
+  loading: () => (
+    <div className="flex w-full items-center">
+      <Skeleton className="mx-auto h-10 w-full" />
+    </div>
+  ),
+});
+
 const orgUrl = "/dashboard/org";
 
 const DashboardSideBar = () => {
   const pathname = usePathname();
   const toggle = uiStore.get.sideBarToggled();
-  const currentOrgId = uiStore.use.currentOrgId();
+  const currentOrgId = uiStore.useTracked.currentOrgId();
 
   if (!pathname.startsWith("/dashboard/")) return <></>;
   return (

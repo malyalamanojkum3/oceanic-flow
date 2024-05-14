@@ -63,7 +63,7 @@ function PSDSupplierEditForm({
   });
 
   const onSubmit = async (values: z.infer<typeof insertSupplierSchema>) => {
-    update.mutate({ supplier: values });
+    update.mutate(values);
     await utils.supplier.getById.invalidate();
   };
 

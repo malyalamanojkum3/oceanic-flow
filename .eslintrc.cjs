@@ -12,7 +12,7 @@ const config = {
   ],
   rules: {
     "@typescript-eslint/no-empty-interface": "off",
-    "@typescript-eslint/no-unsafe-member-access": "warn",
+    "@typescript-eslint/no-unsafe-member-access": "off",
     "@typescript-eslint/no-explicit-any": "off",
     // original
     "@typescript-eslint/array-type": "off",

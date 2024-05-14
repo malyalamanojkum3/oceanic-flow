@@ -15,6 +15,13 @@
       "when": 1715624360791,
       "tag": "0001_uneven_leopardon",
       "breakpoints": true
+    },
+    {
+      "idx": 2,
+      "version": "6",
+      "when": 1715720041558,
+      "tag": "0002_fantastic_rick_jones",
+      "breakpoints": true
     }
   ]
 }

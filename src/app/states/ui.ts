@@ -8,14 +8,13 @@ export const uiStore = createStore("ui")(
     currentOrg: {
       id: "",
       name: "",
-      createdAt: new Date(),
-      ownerId: "",
     },
   },
   {
     persist: {
+      enabled: true,
       name: "ui",
-      storage: createJSONStorage(() => localStorage),
+      storage: createJSONStorage(() => sessionStorage),
     },
   },
 );

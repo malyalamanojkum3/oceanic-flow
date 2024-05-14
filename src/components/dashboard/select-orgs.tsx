@@ -19,17 +19,16 @@ import {
   DropdownMenuLabel,
   DropdownMenuItem,
 } from "@/components/primitives/dropdown-menu";
-import { ChevronsUpDown, Loader2 } from "lucide-react";
+import { ChevronsUpDown } from "lucide-react";
 import Image from "next/image";
 
 import { api } from "@/trpc/react";
 import { uiStore } from "@/app/states/ui";
 
 const SelectOrganizationsDropdown = () => {
-  const currentOrg = uiStore.get.currentOrg();
   const toggle = uiStore.get.sideBarToggled();
-
   const queryOrgs = api.orgs.getUserOrgs.useQuery();
+  const currentOrg = uiStore.use.currentOrg();
 
   return (
     <Credenza>
@@ -42,13 +41,7 @@ const SelectOrganizationsDropdown = () => {
               width={24}
               height={24}
             />
-            <span className="font-medium">
-              {currentOrg ? (
-                currentOrg.name
-              ) : (
-                <Loader2 className="animate-spin" />
-              )}
-            </span>
+            <span className="font-medium">{currentOrg.name}</span>
             <ChevronsUpDown className="ml-auto" size={16} />
           </div>
         </DropdownMenuTrigger>

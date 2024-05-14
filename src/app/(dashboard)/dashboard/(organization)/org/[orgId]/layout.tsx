@@ -24,7 +24,7 @@ const DashboardOrgLayout = ({
       { id: params.orgId },
       { enabled: isAllowed.data },
     ).data;
-    if (currentOrg) uiStore.set.currentOrg(currentOrg);
+    if (!!currentOrg) uiStore.set.currentOrg(currentOrg);
   }
 
   if (isAllowed.isLoading)

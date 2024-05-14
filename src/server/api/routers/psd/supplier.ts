@@ -24,16 +24,12 @@ export const supplierRouter = createTRPCRouter({
         .returning({ name: supplier.name });
     }),
   update: protectedProcedure
-    .input(
-      z.object({
-        supplier: insertSupplierSchema,
-      }),
-    )
+    .input(insertSupplierSchema)
     .mutation(async ({ ctx, input }) => {
       await ctx.db
         .update(supplier)
-        .set(input.supplier)
-        .where(eq(supplier.id, Number(input.supplier.id)))
+        .set(input)
+        .where(eq(supplier.id, Number(input.id)))
         .returning({ supplier });
     }),
   getAll: protectedProcedure
