@@ -32,6 +32,8 @@ import { api } from "@/trpc/react";
 import { insertSupplierSchema } from "@/server/api/routers/psd/schemas.zod";
 import { toast } from "sonner";
 import { useRouter } from "next/navigation";
+import { PhoneInput } from "@/components/primitives/phone-input";
+import { Country, type Value } from "react-phone-number-input";
 
 function PSDSupplierEditForm({
   defaultValues,
@@ -53,7 +55,6 @@ function PSDSupplierEditForm({
   const update = api.supplier.update.useMutation({
     onSuccess: () => {
       toast.success("Supplier edited successfully.");
-
       router.push("./");
     },
     onError: () => {
@@ -157,9 +158,14 @@ function PSDSupplierEditForm({
             name="phone"
             render={({ field }) => (
               <FormItem className="space-y-1">
-                <FormLabel>Contact Number</FormLabel>
+                <FormLabel>Phone Number</FormLabel>
                 <FormControl>
-                  <Input placeholder="1234-567-890" {...field} />
+                  <PhoneInput
+                    defaultCountry={form.watch("countryCode") as Country}
+                    placeholder="Phone Number"
+                    value={field.value as Value}
+                    onChange={field.onChange}
+                  />
                 </FormControl>
                 <FormMessage />
               </FormItem>

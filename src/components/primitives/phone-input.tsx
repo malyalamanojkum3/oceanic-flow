@@ -43,7 +43,7 @@ const PhoneInput: React.ForwardRefExoticComponent<PhoneInputProps> =
           flagComponent={FlagComponent}
           countrySelectComponent={CountrySelect}
           inputComponent={InputComponent}
-          onChange={(value) => onChange?.(value!)}
+          onChange={(value) => onChange?.((value as RPNInput.Value) ?? "")}
           {...props}
         />
       );

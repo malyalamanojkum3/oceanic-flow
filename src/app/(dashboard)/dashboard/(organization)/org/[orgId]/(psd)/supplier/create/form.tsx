@@ -34,6 +34,7 @@ import { toast } from "sonner";
 import { useRouter } from "next/navigation";
 import { uiStore } from "@/app/states/ui";
 import { PhoneInput } from "@/components/primitives/phone-input";
+import { Country } from "react-phone-number-input";
 
 function PSDSupplierCreateForm() {
   const countries = useMemo(() => getCountryDataList(), []);
@@ -162,7 +163,9 @@ function PSDSupplierCreateForm() {
                 <FormLabel>Phone Number</FormLabel>
                 <FormControl>
                   <PhoneInput
+                    defaultCountry={form.watch("countryCode") as Country}
                     placeholder="Phone Number"
+                    value={field.value}
                     onChange={field.onChange}
                   />
                 </FormControl>
