@@ -34,7 +34,7 @@ import { toast } from "sonner";
 import { useRouter } from "next/navigation";
 import { uiStore } from "@/app/states/ui";
 import { PhoneInput } from "@/components/primitives/phone-input";
-import { Country } from "react-phone-number-input";
+import { type Country } from "react-phone-number-input";
 
 function PSDSupplierCreateForm() {
   const countries = useMemo(() => getCountryDataList(), []);

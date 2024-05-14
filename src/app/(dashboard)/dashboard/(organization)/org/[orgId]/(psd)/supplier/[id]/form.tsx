@@ -33,7 +33,7 @@ import { insertSupplierSchema } from "@/server/api/routers/psd/schemas.zod";
 import { toast } from "sonner";
 import { useRouter } from "next/navigation";
 import { PhoneInput } from "@/components/primitives/phone-input";
-import { Country, type Value } from "react-phone-number-input";
+import type { Country, Value } from "react-phone-number-input";
 
 function PSDSupplierEditForm({
   defaultValues,
