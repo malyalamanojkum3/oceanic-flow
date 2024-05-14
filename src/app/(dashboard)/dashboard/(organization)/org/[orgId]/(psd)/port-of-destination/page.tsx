@@ -10,7 +10,7 @@ import { usePathname } from "next/navigation";
 
 const PSDPortOfLoadingPage = () => {
   const currentOrgId = uiStore.get.currentOrgId();
-  const portOfLoading = api.portOfLoading.getAll.useQuery({
+  const portOfDestination = api.portOfDestination.getAll.useQuery({
     orgId: currentOrgId,
   });
   const pn = usePathname();
@@ -21,7 +21,7 @@ const PSDPortOfLoadingPage = () => {
           Create
         </Button>
       </Link>
-      <DataTable columns={columns} data={portOfLoading.data ?? []} />
+      <DataTable columns={columns} data={portOfDestination.data ?? []} />
     </div>
   );
 };
