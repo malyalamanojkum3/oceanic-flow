@@ -15,11 +15,13 @@ const DashboardLayout = async ({ children }: Props) => {
     redirect("/onboarding");
   }
   return (
-    <main className="flex h-screen w-full flex-row">
+    <main className="flex h-screen w-full flex-row overflow-y-hidden">
       <DashboardSideBar />
-      <div className="w-full">
+      <div className="h-full w-full">
         <DashboardTopBar session={session} />
-        <div className="mx-auto max-w-7xl p-8">{children}</div>
+        <div className="no-scrollbar h-[calc(100%-6rem)] w-full overflow-y-scroll">
+          <div className="mx-auto max-w-7xl p-8 pb-0">{children}</div>
+        </div>
       </div>
     </main>
   );

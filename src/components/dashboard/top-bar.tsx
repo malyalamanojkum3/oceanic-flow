@@ -24,14 +24,17 @@ import { uiStore } from "@/app/states/ui";
 
 const DashboardTopBar = ({ session }: { session: Session | null }) => {
   const isDesktop = useMediaQuery("(min-width: 1024px)");
-  const toggle = uiStore.get.sideBarToggled();
+  const toggle = uiStore.use.sideBarToggled();
   const { setTheme } = useTheme();
   const pn = usePathname();
 
   return (
     <nav className="flex h-20 w-full items-center p-4 py-6">
       {!isDesktop && pn.startsWith("/dashboard/") && (
-        <Menu onClick={() => uiStore.set.sideBarToggled(!toggle)} />
+        <Menu
+          className="cursor-pointer"
+          onClick={() => uiStore.set.sideBarToggled(!toggle)}
+        />
       )}
       <DropdownMenu>
         <DropdownMenuTrigger className="ml-auto">

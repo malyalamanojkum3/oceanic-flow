@@ -31,7 +31,7 @@ const orgUrl = "/dashboard/org";
 
 const DashboardSideBar = () => {
   const pathname = usePathname();
-  const toggle = uiStore.get.sideBarToggled();
+  const toggle = uiStore.use.sideBarToggled();
   const currentOrgId = uiStore.useTracked.currentOrgId();
 
   if (!pathname.startsWith("/dashboard/")) return <></>;
