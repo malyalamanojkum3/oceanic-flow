@@ -29,17 +29,23 @@ export function DataTable<TData, TValue>({
     data,
     columns,
     getCoreRowModel: getCoreRowModel(),
+
+    defaultColumn: {
+      size: 5,
+      minSize: 5,
+      maxSize: Number.MAX_SAFE_INTEGER,
+    },
   });
 
   return (
-    <div className="rounded-md border">
+    <div className="w-full rounded-md border">
       <Table>
         <TableHeader>
           {table.getHeaderGroups().map((headerGroup) => (
             <TableRow key={headerGroup.id}>
               {headerGroup.headers.map((header) => {
                 return (
-                  <TableHead key={header.id}>
+                  <TableHead colSpan={header.colSpan} key={header.id}>
                     {header.isPlaceholder
                       ? null
                       : flexRender(
@@ -60,7 +66,10 @@ export function DataTable<TData, TValue>({
                 data-state={row.getIsSelected() && "selected"}
               >
                 {row.getVisibleCells().map((cell) => (
-                  <TableCell key={cell.id}>
+                  <TableCell
+                    style={{ width: `${cell.column.getSize()}px` }}
+                    key={cell.id}
+                  >
                     {flexRender(cell.column.columnDef.cell, cell.getContext())}
                   </TableCell>
                 ))}

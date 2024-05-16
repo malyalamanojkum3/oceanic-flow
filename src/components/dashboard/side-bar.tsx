@@ -13,10 +13,17 @@ import Link from "next/link";
 import slugify from "slugify";
 
 import { primaryDataSource } from "@/lib/psd";
-import { SquareDashedKanban, UserRoundCog } from "lucide-react";
+import { Bolt, SquareDashedKanban, UserRoundCog } from "lucide-react";
 
 import dynamic from "next/dynamic";
 import { Skeleton } from "../primitives/skeleton";
+import {
+  Accordion,
+  AccordionContent,
+  AccordionItem,
+  AccordionTrigger,
+} from "../primitives/accordion";
+import { buttonVariants } from "../primitives/button";
 
 const SelectOrganizationsDropdown = dynamic(() => import("./select-orgs"), {
   ssr: false,
@@ -39,7 +46,7 @@ const DashboardSideBar = () => {
     <ResponsiveWrapper>
       <SelectOrganizationsDropdown />
       <hr className="my-2 border-0" />
-      <div className="no-scrollbar space-y-4 overflow-y-scroll">
+      <div className="no-scrollbar space-y-1 overflow-y-scroll">
         <DashboardSideBarMenu>
           <DashboardSideBarLink
             onClick={() => uiStore.set.sideBarToggled(!toggle)}
@@ -50,22 +57,45 @@ const DashboardSideBar = () => {
           </DashboardSideBarLink>
         </DashboardSideBarMenu>
         <DashboardSideBarMenu>
-          <DashboardSideBarHeader>Primary Data Source</DashboardSideBarHeader>
-          <div className="space-y-0.5">
-            {primaryDataSource.map((source) => (
-              <DashboardSideBarLink
-                onClick={() => uiStore.set.sideBarToggled(!toggle)}
-                key={source.name}
-                href={`${orgUrl}/${currentOrgId}/${slugify(source.name, { lower: true, trim: true })}`}
-                icon={source.icon}
+          <Accordion type="single" collapsible>
+            <AccordionItem value={"psd"} className="space-y-1.5 border-b-0">
+              <AccordionTrigger
+                className={cn(
+                  buttonVariants({
+                    size: "sidebar",
+                    variant: "sidebar",
+                  }),
+                  "justify-start",
+                )}
               >
-                {source.name}
-              </DashboardSideBarLink>
-            ))}
-          </div>
+                <Bolt />
+                Primary Source Data
+              </AccordionTrigger>
+              <AccordionContent>
+                <div className="ml-4 flex flex-col space-y-1">
+                  {primaryDataSource.map((source) => (
+                    <Link
+                      onClick={() => uiStore.set.sideBarToggled(!toggle)}
+                      key={source.name}
+                      href={`${orgUrl}/${currentOrgId}/${slugify(source.name, { lower: true, trim: true })}`}
+                      className={cn(
+                        buttonVariants({
+                          size: "sidebar",
+                          variant: "sidebar",
+                        }),
+                        "justify-start",
+                      )}
+                    >
+                      {source.icon}
+                      {source.name}
+                    </Link>
+                  ))}
+                </div>
+              </AccordionContent>
+            </AccordionItem>
+          </Accordion>
         </DashboardSideBarMenu>
         <DashboardSideBarMenu>
-          <DashboardSideBarHeader>Settings</DashboardSideBarHeader>
           <DashboardSideBarLink
             onClick={() => uiStore.set.sideBarToggled(!toggle)}
             href={`/dashboard/org/${currentOrgId}/settings`}
