@@ -25,25 +25,32 @@ export const insertGeneralNameSchema = z.object({
 
 export const insertGeneralCompleteSchema = z.object({
   id: z.number().optional(),
-  name: z.string(),
-  email: z.string().email(),
-  countryCode: z.string(),
+  name: z.string().trim().min(1),
+  email: z.string().email().trim().min(1),
+  countryCode: z.string().trim().min(1),
   phone: z
     .string()
+    .trim()
     .refine(v.isMobilePhone)
     .transform((v) => v as Value),
-  address: z.string(),
-  bank: z.string(),
+  address: z.string().trim().min(1),
+  bank: z.string().trim().min(1),
   orgId: z.string(),
 });
 
 export const insertSupplierSchema = createInsertSchema(supplier, {
   id: z.number().optional(),
-  email: z.string().email(),
+  name: z.string().trim().min(1),
+  email: z.string().email().trim().min(1),
+  countryCode: z.string().trim().min(1),
   phone: z
     .string()
+    .trim()
     .refine(v.isMobilePhone)
     .transform((v) => v as Value),
+  address: z.string().trim().min(1),
+  bank: z.string().trim().min(1),
+  orgId: z.string(),
 });
 
 export const insertFreightForwarderSchema = createInsertSchema(
