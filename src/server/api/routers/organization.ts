@@ -33,6 +33,7 @@ export const organizationRouter = createTRPCRouter({
         userId: ctx.session.user.id,
         organizationId: org[0].id,
         role: "admin",
+        permissions: 4,
       });
     }),
   getUserOrgs: protectedProcedure.query(async ({ ctx }) => {
@@ -43,6 +44,28 @@ export const organizationRouter = createTRPCRouter({
       },
     });
   }),
+  getAllOrgUsers: protectedProcedure
+    .input(z.object({ id: z.string() }))
+    .query(async ({ ctx, input }) => {
+      return await ctx.db.query.usersToOrganizations.findMany({
+        where: (userToOrgs, { eq }) => eq(userToOrgs.organizationId, input.id),
+      });
+    }),
+  getUserPermission: protectedProcedure
+    .input(z.object({ id: z.string().trim() }))
+    .query(async ({ input, ctx }) => {
+      return await ctx.db.query.usersToOrganizations.findFirst({
+        columns: {
+          userId: true,
+          permissions: true,
+        },
+        where: (userToOrgs, { eq, and }) =>
+          and(
+            eq(userToOrgs.userId, ctx.session.user.id),
+            eq(userToOrgs.organizationId, input.id),
+          ),
+      });
+    }),
   getOrgById: protectedProcedure
     .input(z.object({ id: z.string().trim() }))
     .query(async ({ input, ctx }) => {
@@ -68,14 +91,7 @@ export const organizationRouter = createTRPCRouter({
           code: "INTERNAL_SERVER_ERROR",
           message: "Fatal error, user doesn't have any organizations.",
         });
-      let response = false;
-      for (const org of userOrgs) {
-        if (org.organizationId === input.orgId) {
-          response = true;
-          break;
-        }
-      }
-      return response;
+      return userOrgs.some((org) => org.organizationId === input.orgId);
     }),
   finishOnboarding: protectedProcedure
     .input(z.object({ name: z.string().trim() }))

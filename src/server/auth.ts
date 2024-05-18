@@ -24,12 +24,18 @@ declare module "next-auth" {
     user: {
       id: string;
       hasOnboarded: boolean;
+      organizations: {
+        id: string;
+      }[];
     } & DefaultSession["user"];
   }
 
   interface User extends DefaultUser {
     id: string;
     hasOnboarded: boolean;
+    organizations: {
+      id: string;
+    }[];
   }
 }
 
@@ -47,6 +53,9 @@ export const authOptions: NextAuthOptions = {
     async session({ session, user }) {
       const dbUser = await db.query.users.findFirst({
         where: (users, { eq }) => eq(users.id, user.id),
+        with: {
+          organizations: true,
+        },
       });
 
       if (!dbUser) {
@@ -55,7 +64,12 @@ export const authOptions: NextAuthOptions = {
 
       session.user.id = user.id;
       session.user.hasOnboarded = dbUser.hasOnboarded;
-
+      session.user.organizations = [
+        ...dbUser.organizations.map((org) => ({
+          id: org.id,
+        })),
+      ];
+      console.log(session.user.organizations);
       return session;
     },
   },

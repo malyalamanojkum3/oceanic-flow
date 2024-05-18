@@ -26,6 +26,7 @@ import { api } from "@/trpc/react";
 import { uiStore } from "@/app/states/ui";
 
 const SelectOrganizationsDropdown = () => {
+  const utils = api.useUtils();
   const toggle = uiStore.get.sideBarToggled();
   const queryOrgs = api.orgs.getUserOrgs.useQuery();
   const currentOrg = uiStore.use.currentOrg();
@@ -56,7 +57,10 @@ const SelectOrganizationsDropdown = () => {
           )}
           {queryOrgs.data?.map(({ role, organizations: { id, name } }) => (
             <Link
-              onClick={() => uiStore.set.sideBarToggled(!toggle)}
+              onClick={async () => {
+                uiStore.set.sideBarToggled(!toggle);
+                await utils.orgs.getUserPermission.refetch();
+              }}
               key={id}
               href={{
                 pathname: `/dashboard/org/${id}/overview`,

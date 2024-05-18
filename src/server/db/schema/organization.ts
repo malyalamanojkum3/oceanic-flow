@@ -1,4 +1,5 @@
 import {
+  bigint,
   pgEnum,
   pgTableCreator,
   primaryKey,
@@ -7,6 +8,7 @@ import {
 } from "drizzle-orm/pg-core";
 import { relations, sql } from "drizzle-orm";
 import { users } from "./auth";
+import { ACCESS_ROLES } from "@/lib/permissions";
 
 const roles = ["admin", "manager", "viewer"] as const;
 export type Roles = (typeof roles)[number];
@@ -27,12 +29,16 @@ export const organizations = createTable("organization", {
     .references(() => users.id, { onDelete: "cascade" }),
 });
 
-export const organizationsRelations = relations(organizations, ({ one }) => ({
-  owner: one(users, {
-    fields: [organizations.ownerId],
-    references: [users.id],
+export const organizationsRelations = relations(
+  organizations,
+  ({ one, many }) => ({
+    owner: one(users, {
+      fields: [organizations.ownerId],
+      references: [users.id],
+    }),
+    usersToOrganizations: many(usersToOrganizations),
   }),
-}));
+);
 
 export const usersToOrganizations = createTable(
   "users_to_organizations",
@@ -44,6 +50,9 @@ export const usersToOrganizations = createTable(
       .notNull()
       .references(() => organizations.id, { onDelete: "cascade" }),
     role: rolesEnum("role").default("viewer").notNull(),
+    permissions: bigint("permissions", { mode: "number" })
+      .default(ACCESS_ROLES.admin)
+      .notNull(),
   },
   (t) => ({
     pk: primaryKey({ columns: [t.userId, t.organizationId] }),

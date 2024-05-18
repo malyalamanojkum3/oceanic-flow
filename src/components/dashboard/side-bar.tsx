@@ -24,6 +24,8 @@ import {
   AccordionTrigger,
 } from "../primitives/accordion";
 import { buttonVariants } from "../primitives/button";
+import { api } from "@/trpc/react";
+import { ACCESS_ROLES } from "@/lib/permissions";
 
 const SelectOrganizationsDropdown = dynamic(() => import("./select-orgs"), {
   ssr: false,
@@ -39,9 +41,23 @@ const orgUrl = "/dashboard/org";
 const DashboardSideBar = () => {
   const pathname = usePathname();
   const toggle = uiStore.use.sideBarToggled();
-  const currentOrgId = uiStore.useTracked.currentOrgId();
+  const currentOrgId = uiStore.use.currentOrgId();
+  const query = api.orgs.getUserPermission.useQuery({
+    id: currentOrgId,
+  });
 
   if (!pathname.startsWith("/dashboard/")) return <></>;
+  if (query.isPending || !query.data)
+    return (
+      <div className="min-w-[300px] border-r border-border p-4">
+        <Skeleton className="h-10 w-full" />
+        <div className="mt-6 space-y-2">
+          <Skeleton className="h-12 w-full" />
+          <Skeleton className="h-12 w-full" />
+        </div>
+      </div>
+    );
+
   return (
     <ResponsiveWrapper>
       <SelectOrganizationsDropdown />
@@ -95,15 +111,17 @@ const DashboardSideBar = () => {
             </AccordionItem>
           </Accordion>
         </DashboardSideBarMenu>
-        <DashboardSideBarMenu>
-          <DashboardSideBarLink
-            onClick={() => uiStore.set.sideBarToggled(!toggle)}
-            href={`/dashboard/org/${currentOrgId}/settings`}
-            icon={<UserRoundCog />}
-          >
-            User Management
-          </DashboardSideBarLink>
-        </DashboardSideBarMenu>
+        {query.data.permissions & ACCESS_ROLES.admin ? (
+          <DashboardSideBarMenu>
+            <DashboardSideBarLink
+              onClick={() => uiStore.set.sideBarToggled(!toggle)}
+              href={`/dashboard/org/${currentOrgId}/settings`}
+              icon={<UserRoundCog />}
+            >
+              User Management
+            </DashboardSideBarLink>
+          </DashboardSideBarMenu>
+        ) : null}
       </div>
     </ResponsiveWrapper>
   );
@@ -117,10 +135,6 @@ interface DashboardSidebarItemProps
 
 const DashboardSideBarMenu = ({ children }: PropsWithChildren) => {
   return <div>{children}</div>;
-};
-
-const DashboardSideBarHeader = ({ children }: PropsWithChildren) => {
-  return <h2 className="mb-2 text-xs font-semibold">{children}</h2>;
 };
 
 const DashboardSideBarLink = (props: DashboardSidebarItemProps) => {

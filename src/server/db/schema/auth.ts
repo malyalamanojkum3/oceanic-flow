@@ -11,7 +11,7 @@ import {
   varchar,
 } from "drizzle-orm/pg-core";
 import { type AdapterAccount } from "next-auth/adapters";
-import { organizations } from "./organization";
+import { organizations, usersToOrganizations } from "./organization";
 
 /**
  * This is an example of how to use the multi-project schema feature of Drizzle ORM. Use the same
@@ -22,8 +22,6 @@ import { organizations } from "./organization";
  */
 
 export const createTable = pgTableCreator((name) => `oceanic-flow_${name}`);
-
-export const organizationsData = createTable("organization_data", {});
 
 export const users = createTable(
   "user",
@@ -47,6 +45,7 @@ export const users = createTable(
 export const usersRelations = relations(users, ({ many }) => ({
   accounts: many(accounts),
   organizations: many(organizations),
+  usersToOrganizations: many(usersToOrganizations),
 }));
 
 export const accounts = createTable(

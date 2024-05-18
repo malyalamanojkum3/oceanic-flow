@@ -30,30 +30,29 @@ import {
 import { toast } from "sonner";
 import { uiStore } from "@/app/states/ui";
 
+import { ACCESS_ROLES, convertRoleToPermission } from "@/lib/permissions";
+import { useRouter } from "next/navigation";
+
 const addUserSchema = z.object({
-  email: z.string().email(),
+  input: z.string().email(),
 });
 
 const DashboardOrgSettingsPage = () => {
-  const form = useForm<z.infer<typeof addUserSchema>>({
-    resolver: zodResolver(addUserSchema),
-    defaultValues: {
-      email: "",
-    },
+  const currentOrgId = uiStore.get.currentOrgId();
+  const router = useRouter();
+
+  const userPermsQuery = api.orgs.getUserPermission.useQuery({
+    id: currentOrgId,
   });
 
-  const queryUsers = api.users.getManyByEmail.useQuery(
-    {
-      email: form.watch("email"),
-    },
-    { enabled: form.watch("email") ? true : false },
-  );
+  if (userPermsQuery.isLoading) <Loader2 className="animate-spin" />;
 
-  const [select, setSelect] = useState<boolean>(false);
-  const [role, setRole] = useState<Roles>("viewer");
-
-  const currentOrgId = uiStore.get.currentOrgId();
-
+  if (
+    !userPermsQuery.data ||
+    (userPermsQuery.data.permissions & ACCESS_ROLES.admin) === 0
+  ) {
+    router.back();
+  }
   const userToOrgMutation = api.users.addUserToOrg.useMutation({
     onSuccess: () => {
       toast.success("Added user successfully.");
@@ -63,11 +62,29 @@ const DashboardOrgSettingsPage = () => {
     },
   });
 
+  const form = useForm<z.infer<typeof addUserSchema>>({
+    resolver: zodResolver(addUserSchema),
+    defaultValues: {
+      input: "",
+    },
+  });
+
+  const queryUsers = api.users.getFilteredManyByEmail.useQuery(
+    { search: form.watch("input"), orgId: currentOrgId },
+    {
+      enabled: form.watch("input") ? true : false,
+    },
+  );
+
+  const [select, setSelect] = useState<boolean>(false);
+  const [role, setRole] = useState<Roles>("viewer");
+
   const onSubmit = (values: z.infer<typeof addUserSchema>) => {
     userToOrgMutation.mutate({
-      email: values.email,
+      email: values.input,
       orgId: currentOrgId,
       role: role,
+      permissions: convertRoleToPermission(role),
     });
   };
 
@@ -87,7 +104,7 @@ const DashboardOrgSettingsPage = () => {
         >
           <FormField
             control={form.control}
-            name="email"
+            name="input"
             render={({ field }) => (
               <FormItem className="flex flex-col">
                 <Command
@@ -98,10 +115,10 @@ const DashboardOrgSettingsPage = () => {
                     <CommandInput
                       value={field.value}
                       onValueChange={async (value) => {
-                        form.setValue("email", value);
+                        form.setValue("input", value);
                         setSelect(false);
                       }}
-                      placeholder="Search user by email..."
+                      placeholder="Search user..."
                     >
                       <Select
                         value={role}
@@ -130,15 +147,15 @@ const DashboardOrgSettingsPage = () => {
                     )}
                     {queryUsers.data &&
                       !select &&
-                      queryUsers.data.length === 1 && (
-                        <CommandGroup heading="Users">
+                      queryUsers.data.length >= 1 && (
+                        <CommandGroup>
                           {queryUsers.data?.map((user) => (
                             <CommandItem
-                              keywords={[user.email]}
+                              keywords={[user.email, user.name!]}
                               key={user.id}
                               className="flex gap-2"
                               onSelect={async (value) => {
-                                form.setValue("email", value);
+                                form.setValue("input", value);
                                 setSelect(true);
                               }}
                             >

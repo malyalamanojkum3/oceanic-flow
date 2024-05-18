@@ -1,5 +1,5 @@
 import { z } from "zod";
-import { createTRPCRouter, protectedProcedure } from "../trpc";
+import { adminProcedure, createTRPCRouter } from "../trpc";
 import {
   rolesEnum,
   usersToOrganizations,
@@ -7,22 +7,37 @@ import {
 import { TRPCError } from "@trpc/server";
 
 export const userRouter = createTRPCRouter({
-  getManyByEmail: protectedProcedure
-    .input(z.object({ email: z.string().trim() }))
+  getFilteredManyByEmail: adminProcedure
+    .input(z.object({ search: z.string(), orgId: z.string() }))
     .query(async ({ input, ctx }) => {
-      const usrs = await ctx.db.query.users.findMany({
-        where: (users, { like }) => like(users.email, `%${input.email}%`),
+      const search = await ctx.db.query.users.findMany({
         limit: 3,
+        with: {
+          usersToOrganizations: {
+            columns: { organizationId: true },
+          },
+        },
+        where: (users, { or, ilike }) =>
+          or(
+            ilike(users.email, `%${input.search}%`),
+            ilike(users.name, `%${input.search}%`),
+          ),
       });
-      console.log(usrs);
-      return usrs;
+      const res = search.filter(
+        (user) =>
+          !user.usersToOrganizations.some(
+            (org) => org.organizationId === input.orgId,
+          ),
+      );
+      return res;
     }),
-  addUserToOrg: protectedProcedure
+  addUserToOrg: adminProcedure
     .input(
       z.object({
         email: z.string().trim(),
         orgId: z.string().trim(),
         role: z.enum(rolesEnum.enumValues),
+        permissions: z.number(),
       }),
     )
     .mutation(async ({ input, ctx }) => {
@@ -44,6 +59,7 @@ export const userRouter = createTRPCRouter({
         userId: user.id,
         organizationId: input.orgId,
         role: input.role,
+        permissions: input.permissions,
       });
     }),
 });
