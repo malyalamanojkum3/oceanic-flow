@@ -30,7 +30,7 @@ import {
 import { toast } from "sonner";
 import { uiStore } from "@/app/states/ui";
 
-import { ACCESS_ROLES, convertRoleToPermission } from "@/lib/permissions";
+import { ACCESS, convertRoleToPermission } from "@/lib/permissions";
 import { useRouter } from "next/navigation";
 
 const addUserSchema = z.object({
@@ -49,7 +49,7 @@ const DashboardOrgSettingsPage = () => {
 
   if (
     !userPermsQuery.data ||
-    (userPermsQuery.data.permissions & ACCESS_ROLES.admin) === 0
+    !!!(userPermsQuery.data.permissions & ACCESS.admin)
   ) {
     router.back();
   }

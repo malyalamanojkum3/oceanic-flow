@@ -1,5 +1,6 @@
 "use client";
 
+import { uiStore } from "@/app/states/ui";
 import { Button } from "@/components/primitives/button";
 import {
   DropdownMenu,
@@ -51,14 +52,18 @@ export const columns: ColumnDef<z.infer<typeof insertGeneralNameSchema>>[] = [
     id: "delete",
     cell: ({ row }) => {
       const utils = api.useUtils();
-      const del = api.placeOfLoading.delete.useMutation({});
+      const del = api.placeOfLoading.delete.useMutation({
+        onSuccess: async () => {
+          await utils.placeOfLoading.invalidate();
+        },
+      });
+      const currentOrgId = uiStore.get.currentOrgId();
 
       return (
         <Trash2
           size={20}
           onClick={async () => {
-            del.mutate({ id: row.original.id! });
-            await utils.placeOfLoading.getAll.refetch();
+            del.mutate({ id: row.original.id!, orgId: currentOrgId });
           }}
           className="cursor-pointer text-destructive"
         />

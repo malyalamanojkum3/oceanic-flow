@@ -3,36 +3,88 @@ import type { RouterLike, UtilsLike } from "@trpc/react-query/shared";
 
 import { organizationRouter } from "./routers/organization";
 import { userRouter } from "./routers/users";
-import { supplierRouter } from "./routers/psd/supplier";
-import { freightForwarderRouter } from "./routers/psd/freight-forwarder";
-import { truckingCompanyRouter } from "./routers/psd/trucking-company";
-import { customsHouseAgentRouter } from "./routers/psd/customs-house-agent";
-import { descriptionOfGoodsRouter } from "./routers/psd/description-of-goods";
-import { exportShippingInformationRouter } from "./routers/psd/export-shipping-information";
-import { PSICAgencyRouter } from "./routers/psd/psic-agency";
-import { shippingLineRouter } from "./routers/psd/shipping-line";
-import { placeOfLoadingRouter } from "./routers/psd/place-of-loading";
-import { portOfLoadingRouter } from "./routers/psd/port-of-loading";
-import { portOfDestinationRouter } from "./routers/psd/port-of-destination";
-import { placeOfDeliveryRouter } from "./routers/psd/place-of-delivery";
-import { vesselNameRouter } from "./routers/psd/vessel-name";
-import { salesOrderRouter } from "./routers/psd/sales-order";
+import { createGenericRouter } from "./routers/psd";
+
+import {
+  insertSupplierSchema,
+  insertGeneralCompleteSchema,
+  insertDescriptionOfGoodsSchema,
+  insertExportShippingInformationSchema,
+  insertGeneralNameSchema,
+} from "./routers/psd/schemas.zod";
+
+import { supplier } from "@/server/db/schema/psd/supplier";
+import { freightForwarder } from "../db/schema/psd/freight-forwarder";
+import { truckingCompany } from "../db/schema/psd/trucking-company";
+import { customsHouseAgent } from "../db/schema/psd/customs-house-agent";
+import { descriptionOfGoods } from "../db/schema/psd/descriptions-of-goods";
+import { exportShippingInformation } from "../db/schema/psd/export-shipping-information";
+import { shippingLine } from "../db/schema/psd/shipping-line";
+import { PSICAgency } from "../db/schema/psd/psic-agency";
+import { placeOfLoading } from "../db/schema/psd/place-of-loading";
+import { portOfLoading } from "../db/schema/psd/port-of-loading";
+import { portOfDestination } from "../db/schema/psd/port-of-destination";
+import { placeOfDelivery } from "../db/schema/psd/place-of-delivery";
+import { vesselName } from "../db/schema/psd/vessel-name";
+import { salesOrder } from "../db/schema/psd/sales-order";
 
 const psdRouter = {
-  supplier: supplierRouter,
-  freightForwarder: freightForwarderRouter,
-  truckingCompany: truckingCompanyRouter,
-  customsHouseAgent: customsHouseAgentRouter,
-  descriptionOfGoods: descriptionOfGoodsRouter,
-  exportShippingInformation: exportShippingInformationRouter,
-  PSICAgency: PSICAgencyRouter,
-  shippingLine: shippingLineRouter,
-  placeOfLoading: placeOfLoadingRouter,
-  portOfLoading: portOfLoadingRouter,
-  portOfDestination: portOfDestinationRouter,
-  placeOfDelivery: placeOfDeliveryRouter,
-  vesselName: vesselNameRouter,
-  salesOrder: salesOrderRouter,
+  supplier: createGenericRouter({
+    table: supplier,
+    schema: insertSupplierSchema,
+  }),
+  freightForwarder: createGenericRouter({
+    table: freightForwarder,
+    schema: insertGeneralCompleteSchema,
+  }),
+  truckingCompany: createGenericRouter({
+    table: truckingCompany,
+    schema: insertGeneralCompleteSchema,
+  }),
+  customsHouseAgent: createGenericRouter({
+    table: customsHouseAgent,
+    schema: insertGeneralCompleteSchema,
+  }),
+  descriptionOfGoods: createGenericRouter({
+    table: descriptionOfGoods,
+    schema: insertDescriptionOfGoodsSchema,
+  }),
+  exportShippingInformation: createGenericRouter({
+    table: exportShippingInformation,
+    schema: insertExportShippingInformationSchema,
+  }),
+  PSICAgency: createGenericRouter({
+    table: PSICAgency,
+    schema: insertGeneralCompleteSchema,
+  }),
+  shippingLine: createGenericRouter({
+    table: shippingLine,
+    schema: insertGeneralNameSchema,
+  }),
+  placeOfLoading: createGenericRouter({
+    table: placeOfLoading,
+    schema: insertGeneralNameSchema,
+  }),
+  portOfLoading: createGenericRouter({
+    table: portOfLoading,
+    schema: insertGeneralNameSchema,
+  }),
+  portOfDestination: createGenericRouter({
+    table: portOfDestination,
+    schema: insertGeneralNameSchema,
+  }),
+  placeOfDelivery: createGenericRouter({
+    table: placeOfDelivery,
+    schema: insertGeneralNameSchema,
+  }),
+  vesselName: createGenericRouter({
+    table: vesselName,
+    schema: insertGeneralNameSchema,
+  }),
+  salesOrder: createGenericRouter({
+    table: salesOrder,
+    schema: insertGeneralNameSchema,
+  }),
 };
 
 /**

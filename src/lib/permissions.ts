@@ -1,6 +1,6 @@
 import { type Roles } from "@/server/db/schema/organization";
 
-const ACCESS = {
+export const ACCESS = {
   read: 0b1,
   write: 0b10,
   admin: 0b100,
@@ -8,8 +8,8 @@ const ACCESS = {
 
 export const ACCESS_ROLES = {
   viewer: ACCESS.read,
-  manager: ACCESS.read & ACCESS.write,
-  admin: ACCESS.admin,
+  manager: ACCESS.read | ACCESS.write,
+  admin: ACCESS.read | ACCESS.write | ACCESS.admin,
 };
 
 export const convertRoleToPermission = (role: Roles) => {

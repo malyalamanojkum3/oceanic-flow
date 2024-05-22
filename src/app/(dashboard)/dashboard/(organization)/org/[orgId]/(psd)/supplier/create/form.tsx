@@ -180,7 +180,7 @@ function PSDSupplierCreateForm() {
               <FormItem className="space-y-1">
                 <FormLabel>Address</FormLabel>
                 <FormControl>
-                  <Input placeholder="Email" {...field} />
+                  <Input placeholder="Address" {...field} />
                 </FormControl>
                 <FormMessage />
               </FormItem>

@@ -25,7 +25,7 @@ import {
 } from "../primitives/accordion";
 import { buttonVariants } from "../primitives/button";
 import { api } from "@/trpc/react";
-import { ACCESS_ROLES } from "@/lib/permissions";
+import { ACCESS, ACCESS_ROLES } from "@/lib/permissions";
 
 const SelectOrganizationsDropdown = dynamic(() => import("./select-orgs"), {
   ssr: false,
@@ -111,7 +111,7 @@ const DashboardSideBar = () => {
             </AccordionItem>
           </Accordion>
         </DashboardSideBarMenu>
-        {query.data.permissions & ACCESS_ROLES.admin ? (
+        {query.data.permissions & ACCESS.admin ? (
           <DashboardSideBarMenu>
             <DashboardSideBarLink
               onClick={() => uiStore.set.sideBarToggled(!toggle)}

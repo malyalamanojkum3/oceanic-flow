@@ -13,7 +13,7 @@ import { z, ZodError } from "zod";
 
 import { getServerAuthSession } from "@/server/auth";
 import { db } from "@/server/db";
-import { ACCESS_ROLES } from "@/lib/permissions";
+import { ACCESS, ACCESS_ROLES } from "@/lib/permissions";
 
 /**
  * 1. CONTEXT
@@ -122,9 +122,30 @@ export const adminProcedure = protectedProcedure
       },
     });
 
-    if ((user!.permissions & ACCESS_ROLES.admin) === 0)
+    if (!!!(user!.permissions & ACCESS.admin))
       throw new TRPCError({
         code: "FORBIDDEN",
       });
     else return next({});
+  });
+
+export const managerProcedure = protectedProcedure
+  .input(z.object({ orgId: z.string() }))
+  .use(async ({ ctx, input, next }) => {
+    const user = await ctx.db.query.usersToOrganizations.findFirst({
+      where: (rel, { eq, and }) =>
+        and(
+          eq(rel.userId, ctx.session.user.id),
+          eq(rel.organizationId, input.orgId),
+        ),
+      columns: {
+        permissions: true,
+      },
+    });
+
+    if (!!!(user!.permissions & (ACCESS.read | ACCESS.write)))
+      throw new TRPCError({
+        code: "FORBIDDEN",
+      });
+    return next({});
   });
