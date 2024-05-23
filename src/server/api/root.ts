@@ -4,87 +4,37 @@ import type { RouterLike, UtilsLike } from "@trpc/react-query/shared";
 import { organizationRouter } from "./routers/organization";
 import { userRouter } from "./routers/users";
 import { createGenericRouter } from "./routers/psd";
+import  SupplierRouter  from "./routers/psd/supplier";
+import  customsHouseAgentRouter  from "./routers/psd/customsHouseAgent";
+import  freightForwarderRouter  from "./routers/psd/freightForwarder";
+import  truckingCompanyRouter  from "./routers/psd/truckingCompany";
+import  descriptionOfGoodsRouter  from "./routers/psd/descriptionOfGoods";
+import  exportShippingInformationRouter  from "./routers/psd/exportShippingInformation";
+import  PSICAgencyRouter  from "./routers/psd/PSICAgency";
+import  shippingLineRouter  from "./routers/psd/shippingLine";
+import  placeOfLoadingRouter  from "./routers/psd/placeOfLoading";
+import  portOfLoadingRouter  from "./routers/psd/portOfLoading";
+import  portOfDestinationRouter  from "./routers/psd/portOfDestination";
+import  placeOfDeliveryRouter  from "./routers/psd/placeOfDelivery";
+import  vesselNameRouter  from "./routers/psd/vesselName";
+import  salesOrderRouter  from "./routers/psd/salesOrder";
 
-import {
-  insertSupplierSchema,
-  insertGeneralCompleteSchema,
-  insertDescriptionOfGoodsSchema,
-  insertExportShippingInformationSchema,
-  insertGeneralNameSchema,
-} from "./routers/psd/schemas.zod";
-
-import { supplier } from "@/server/db/schema/psd/supplier";
-import { freightForwarder } from "../db/schema/psd/freight-forwarder";
-import { truckingCompany } from "../db/schema/psd/trucking-company";
-import { customsHouseAgent } from "../db/schema/psd/customs-house-agent";
-import { descriptionOfGoods } from "../db/schema/psd/descriptions-of-goods";
-import { exportShippingInformation } from "../db/schema/psd/export-shipping-information";
-import { shippingLine } from "../db/schema/psd/shipping-line";
-import { PSICAgency } from "../db/schema/psd/psic-agency";
-import { placeOfLoading } from "../db/schema/psd/place-of-loading";
-import { portOfLoading } from "../db/schema/psd/port-of-loading";
-import { portOfDestination } from "../db/schema/psd/port-of-destination";
-import { placeOfDelivery } from "../db/schema/psd/place-of-delivery";
-import { vesselName } from "../db/schema/psd/vessel-name";
-import { salesOrder } from "../db/schema/psd/sales-order";
 
 const psdRouter = {
-  supplier: createGenericRouter({
-    table: supplier,
-    schema: insertSupplierSchema,
-  }),
-  freightForwarder: createGenericRouter({
-    table: freightForwarder,
-    schema: insertGeneralCompleteSchema,
-  }),
-  truckingCompany: createGenericRouter({
-    table: truckingCompany,
-    schema: insertGeneralCompleteSchema,
-  }),
-  customsHouseAgent: createGenericRouter({
-    table: customsHouseAgent,
-    schema: insertGeneralCompleteSchema,
-  }),
-  descriptionOfGoods: createGenericRouter({
-    table: descriptionOfGoods,
-    schema: insertDescriptionOfGoodsSchema,
-  }),
-  exportShippingInformation: createGenericRouter({
-    table: exportShippingInformation,
-    schema: insertExportShippingInformationSchema,
-  }),
-  PSICAgency: createGenericRouter({
-    table: PSICAgency,
-    schema: insertGeneralCompleteSchema,
-  }),
-  shippingLine: createGenericRouter({
-    table: shippingLine,
-    schema: insertGeneralNameSchema,
-  }),
-  placeOfLoading: createGenericRouter({
-    table: placeOfLoading,
-    schema: insertGeneralNameSchema,
-  }),
-  portOfLoading: createGenericRouter({
-    table: portOfLoading,
-    schema: insertGeneralNameSchema,
-  }),
-  portOfDestination: createGenericRouter({
-    table: portOfDestination,
-    schema: insertGeneralNameSchema,
-  }),
-  placeOfDelivery: createGenericRouter({
-    table: placeOfDelivery,
-    schema: insertGeneralNameSchema,
-  }),
-  vesselName: createGenericRouter({
-    table: vesselName,
-    schema: insertGeneralNameSchema,
-  }),
-  salesOrder: createGenericRouter({
-    table: salesOrder,
-    schema: insertGeneralNameSchema,
-  }),
+  supplier: SupplierRouter,
+  customsHouseAgent: customsHouseAgentRouter,
+  freightForwarder: freightForwarderRouter,
+  truckingCompany: truckingCompanyRouter,
+  descriptionOfGoods: descriptionOfGoodsRouter,
+  exportShippingInformation: exportShippingInformationRouter,
+  PSICAgency: PSICAgencyRouter,
+  shippingLine: shippingLineRouter,
+  placeOfLoading: placeOfDeliveryRouter,
+  portOfLoading: portOfLoadingRouter,
+  portOfDestination: portOfDestinationRouter,
+  placeOfDelivery: placeOfDeliveryRouter,
+  vesselName: vesselNameRouter,
+  salesOrder: salesOrderRouter,
 };
 
 /**

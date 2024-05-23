@@ -14,7 +14,8 @@ import { type ColumnDef } from "@tanstack/react-table";
 import { MoreHorizontal, Trash2 } from "lucide-react";
 import { usePathname, useRouter } from "next/navigation";
 import { type z } from "zod";
-
+import { uiStore } from "@/app/states/ui";
+const currentOrgId = uiStore.get.currentOrgId();
 const CellAction = ({ row }: { row: any }) => {
   const router = useRouter();
   const pn = usePathname();
@@ -78,7 +79,7 @@ export const columns: ColumnDef<z.infer<typeof insertTruckingCompanySchema>>[] =
           <Trash2
             size={20}
             onClick={async () => {
-              del.mutate({ id: row.original.id! });
+              del.mutate({ id: row.original.id!, orgId: currentOrgId});
               await utils.truckingCompany.getAll.refetch();
             }}
             className="cursor-pointer text-destructive"
