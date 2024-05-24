@@ -49,6 +49,9 @@ export const organizationRouter = createTRPCRouter({
     .query(async ({ ctx, input }) => {
       return await ctx.db.query.usersToOrganizations.findMany({
         where: (userToOrgs, { eq }) => eq(userToOrgs.organizationId, input.id),
+        with: {
+          user: true,
+        },
       });
     }),
   getUserPermission: protectedProcedure

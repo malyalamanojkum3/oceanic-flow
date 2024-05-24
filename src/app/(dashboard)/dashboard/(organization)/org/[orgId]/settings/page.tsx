@@ -32,6 +32,7 @@ import { uiStore } from "@/app/states/ui";
 
 import { ACCESS, convertRoleToPermission } from "@/lib/permissions";
 import { useRouter } from "next/navigation";
+import UsersTable from "./usersTable";
 
 const addUserSchema = z.object({
   input: z.string().email(),
@@ -181,6 +182,7 @@ const DashboardOrgSettingsPage = () => {
           </Button>
         </form>
       </Form>
+      <UsersTable />
     </div>
   );
 };
