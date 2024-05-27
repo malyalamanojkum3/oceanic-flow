@@ -8,6 +8,7 @@ export const uiStore = createStore("ui")(
     currentOrg: {
       id: "",
       name: "",
+      ownerId: "",
     },
   },
   {

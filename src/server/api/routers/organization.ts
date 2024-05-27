@@ -1,8 +1,9 @@
-import { createTRPCRouter, protectedProcedure } from "../trpc";
+import { createTRPCRouter, protectedProcedure, adminProcedure, managerProcedure } from "../trpc";
 import {
   organizations,
   usersToOrganizations,
 } from "@/server/db/schema/organization";
+import { rolesEnum } from "@/server/db/schema/organization";
 import { customAlphabet } from "nanoid";
 import { eq } from "drizzle-orm";
 import { z } from "zod";
@@ -47,12 +48,13 @@ export const organizationRouter = createTRPCRouter({
   getAllOrgUsers: protectedProcedure
     .input(z.object({ id: z.string() }))
     .query(async ({ ctx, input }) => {
-      return await ctx.db.query.usersToOrganizations.findMany({
+      const users = await ctx.db.query.usersToOrganizations.findMany({
         where: (userToOrgs, { eq }) => eq(userToOrgs.organizationId, input.id),
         with: {
           user: true,
         },
       });
+      return users;
     }),
   getUserPermission: protectedProcedure
     .input(z.object({ id: z.string().trim() }))
@@ -122,5 +124,53 @@ export const organizationRouter = createTRPCRouter({
         .update(users)
         .set({ hasOnboarded: true })
         .where(eq(users.id, ctx.session.user.id));
+    }),
+    //write admin protected procedure to update an usersToOrganizations
+  updateUserFromOrg: adminProcedure 
+    .input(z.object({ 
+      userId: z.string().trim(),
+      orgId: z.string().trim(),
+      role: z.enum(rolesEnum.enumValues),
+      permissions: z.number() 
+    })) 
+    .mutation(async ({ ctx, input }) => {
+      const ownerId =  ctx.userOrgRole?.organizations.ownerId;
+      //if the input.userId is the same as the owner id throw error saying owner cant be updated
+      if (input.userId === ownerId)
+        throw new TRPCError({
+          code: "FORBIDDEN",
+          message: "Owner can't be updated.",
+        });
+      const res = await ctx.db
+        .update(usersToOrganizations)
+        .set({ role: input.role, permissions: input.permissions })
+        .where(eq(usersToOrganizations.userId, input.userId))
+        if (!res)
+          throw new TRPCError({
+            code: "INTERNAL_SERVER_ERROR",
+            message: "Id not found.",
+          });
+        return res;
+    }),
+    //write a admin protected procedure to delete an usersToOrganizations
+  deleteUserFromOrg: adminProcedure
+    .input(z.object({ userId: z.string().trim(), orgId: z.string().trim() }))
+    .mutation(async ({ ctx, input }) => {
+      const ownerId =  ctx.userOrgRole?.organizations.ownerId;
+    //check if the input.userId is the same as the owner id if so throw error saying owner cant be deleted  
+      if (input.userId === ownerId)
+        throw new TRPCError({
+          code: "FORBIDDEN",
+          message: "Owner can't be deleted.",
+        });
+      const  res = await ctx.db
+        .delete(usersToOrganizations)
+        .where(eq(usersToOrganizations.userId, input.userId))
+        if (!res)
+          throw new TRPCError({
+            code: "INTERNAL_SERVER_ERROR",
+            message: "Id not found.",
+          });
+        return res;
     }),
 });

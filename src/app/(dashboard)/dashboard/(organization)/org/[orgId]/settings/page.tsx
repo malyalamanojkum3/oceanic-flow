@@ -41,6 +41,7 @@ const addUserSchema = z.object({
 const DashboardOrgSettingsPage = () => {
   const currentOrgId = uiStore.get.currentOrgId();
   const router = useRouter();
+  const utils = api.useUtils();
 
   const userPermsQuery = api.orgs.getUserPermission.useQuery({
     id: currentOrgId,
@@ -80,16 +81,20 @@ const DashboardOrgSettingsPage = () => {
   const [select, setSelect] = useState<boolean>(false);
   const [role, setRole] = useState<Roles>("viewer");
 
-  const onSubmit = (values: z.infer<typeof addUserSchema>) => {
-    userToOrgMutation.mutate({
+  const onSubmit = async(values: z.infer<typeof addUserSchema>) => {
+    await userToOrgMutation.mutateAsync({
       email: values.input,
       orgId: currentOrgId,
       role: role,
       permissions: convertRoleToPermission(role),
     });
+    await utils.orgs.getAllOrgUsers.refetch();
+    // reset form
+    form.reset();
   };
 
   return (
+    <div >
     <div className="flex w-full flex-col space-y-8 md:flex-row md:space-x-8 md:space-y-0">
       <div className="w-full md:w-1/2">
         <h2 className="text-xl font-bold">Members</h2>
@@ -182,6 +187,7 @@ const DashboardOrgSettingsPage = () => {
           </Button>
         </form>
       </Form>
+      </div>
       <UsersTable />
     </div>
   );

@@ -31,12 +31,13 @@ const Dashboard = () => {
 
         <div className="grid grid-cols-1 gap-4 md:grid-cols-2">
           {queryOrgs.isLoading && <Skeleton className="h-24 w-full" />}
-          {queryOrgs.data?.map(({ organizations: { name, createdAt, id } }) => (
+          {queryOrgs.data?.map(({ organizations: { name, createdAt, id, ownerId } }) => (
             <Card
               key={id}
               onClick={() => {
                 router.push(`/dashboard/org/${id}/overview`);
                 uiStore.set.currentOrgId(id);
+                uiStore.set.currentOrg({id, name, ownerId})
               }}
               className="cursor-pointer bg-muted"
             >

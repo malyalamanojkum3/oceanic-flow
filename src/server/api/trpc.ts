@@ -111,7 +111,7 @@ export const protectedProcedure = t.procedure.use(({ ctx, next }) => {
 export const adminProcedure = protectedProcedure
   .input(z.object({ orgId: z.string() }))
   .use(async ({ ctx, input, next }) => {
-    const user = await ctx.db.query.usersToOrganizations.findFirst({
+    const userOrgRole = await ctx.db.query.usersToOrganizations.findFirst({
       where: (rel, { eq, and }) =>
         and(
           eq(rel.userId, ctx.session.user.id),
@@ -120,13 +120,16 @@ export const adminProcedure = protectedProcedure
       columns: {
         permissions: true,
       },
+      with: {
+        organizations: true,
+      },
     });
 
-    if (!!!(user!.permissions & ACCESS.admin))
+    if (!!!(userOrgRole!.permissions & ACCESS.admin))
       throw new TRPCError({
         code: "FORBIDDEN",
       });
-    else return next({});
+    else return next({ ctx : { userOrgRole}});
   });
 
 export const managerProcedure = protectedProcedure

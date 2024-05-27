@@ -16,8 +16,8 @@ import { usePathname, useRouter } from "next/navigation";
 import { type z } from "zod";
 import { uiStore } from "@/app/states/ui";
 const currentOrgId = uiStore.get.currentOrgId();
-const CellAction = ({ row }: { row: any }) => {
 
+const CellAction = ({ row }: { row: any }) => {
   const router = useRouter();
   const pn = usePathname();
   return (
