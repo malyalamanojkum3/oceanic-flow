@@ -8,7 +8,7 @@ import {
   import { eq } from "drizzle-orm";
   import { insertSalesOrderSchema as schema } from "./schemas.zod";
   import { salesOrder as table} from "../../../db/schema/psd/sales-order";
-  
+  import { count } from "drizzle-orm";
 
  const Router = createTRPCRouter({
         create: managerProcedure.input(schema).mutation(async ({ ctx, input }) => {
@@ -31,17 +31,31 @@ import {
                 .returning({ table });
         }),
         getAll: protectedProcedure
-            .input(z.object({ orgId: z.string() }))
-            .query(async ({ ctx, input }) => {
-                try {
-                    return await ctx.db
-                        .select()
-                        .from(table)
-                        .where(eq(table.orgId, input.orgId));
-                } catch (err) {
-                    throw new TRPCError({ code: "INTERNAL_SERVER_ERROR", cause: err });
-                }
-            }),
+        .input(z.object({ orgId: z.string(), page: z.number(), itemsPerPage: z.number() }))
+        .query(async ({ ctx, input }) => {
+            try {
+                // Count total items
+                const totalItemsResult = await ctx.db
+                .select({ count: count() })
+                .from(table)
+                .where(eq(table.orgId, input.orgId));
+                const totalItems = totalItemsResult[0]?.count || 0;
+                // Calculate total pages
+                const totalPages = Math.ceil(totalItems / input.itemsPerPage);
+
+                // Fetch items for current page
+                const items = await ctx.db
+                    .select()
+                    .from(table)
+                    .where(eq(table.orgId, input.orgId))
+                    .limit(input.itemsPerPage)
+                    .offset((input.page - 1) * input.itemsPerPage);
+
+                return { items, totalPages };
+            } catch (err) {
+                throw new TRPCError({ code: "INTERNAL_SERVER_ERROR", cause: err });
+            }
+        }),
         getById: protectedProcedure
             .input(z.object({ id: z.coerce.number() }))
             .query(async ({ ctx, input }) => {
