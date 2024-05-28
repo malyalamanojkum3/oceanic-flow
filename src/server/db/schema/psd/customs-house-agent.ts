@@ -2,11 +2,11 @@ import { relations } from "drizzle-orm";
 import {
   customType,
   pgTableCreator,
-  serial,
   varchar,
 } from "drizzle-orm/pg-core";
 import { organizations } from "../organization";
 import { type Value } from "react-phone-number-input";
+import { buyer } from "./buyer";
 
 export const phone = customType<{ data: Value }>({
   dataType() {
@@ -17,7 +17,7 @@ export const phone = customType<{ data: Value }>({
 const createTable = pgTableCreator((name) => `oceanic-flow_${name}`);
 
 export const customsHouseAgent = createTable("customs-house-agent", {
-  id: serial("id").notNull().primaryKey(),
+  id: varchar("id", { length: 36 }).notNull().primaryKey(),
   name: varchar("name", { length: 255 }).notNull(),
   email: varchar("email", { length: 255 }).notNull(),
   countryCode: varchar("countryCode", { length: 8 }).notNull(),
@@ -31,10 +31,11 @@ export const customsHouseAgent = createTable("customs-house-agent", {
 
 export const truckingCompanyRelations = relations(
   customsHouseAgent,
-  ({ one }) => ({
+  ({ one, many }) => ({
     org: one(organizations, {
       fields: [customsHouseAgent.orgId],
       references: [organizations.id],
     }),
+    buyers: many(buyer)
   }),
 );

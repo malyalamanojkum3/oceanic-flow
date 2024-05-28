@@ -3,7 +3,7 @@
 import { api } from "@/trpc/react";
 import PSDNameForm from "@/components/dashboard/forms/psd/name-form";
 
-const PSDPortOfLoadingPage = ({ params }: { params: { id: number } }) => {
+const PSDPortOfLoadingPage = ({ params }: { params: { id: string } }) => {
   const utils = api.useUtils().shippingLine;
   const shippingLine = api.shippingLine.getById.useQuery({
     id: params.id,

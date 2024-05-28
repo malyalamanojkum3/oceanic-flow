@@ -17,7 +17,7 @@ export const phone = customType<{ data: Value }>({
 const createTable = pgTableCreator((name) => `oceanic-flow_${name}`);
 
 export const PSICAgency = createTable("psic-agency", {
-  id: serial("id").notNull().primaryKey(),
+  id: varchar("id").notNull().primaryKey(),
   name: varchar("name", { length: 255 }).notNull(),
   email: varchar("email", { length: 255 }).notNull(),
   countryCode: varchar("countryCode", { length: 8 }).notNull(),

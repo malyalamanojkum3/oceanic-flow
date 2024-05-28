@@ -5,7 +5,7 @@ import { organizations } from "../organization";
 const createTable = pgTableCreator((name) => `oceanic-flow_${name}`);
 
 export const salesOrder = createTable("sales-order", {
-  id: serial("id").notNull().primaryKey(),
+  id: varchar("id").notNull().primaryKey(),
   specialTerms: varchar("special_terms", { length: 255 }).notNull(),
   orgId: varchar("orgId")
     .notNull()

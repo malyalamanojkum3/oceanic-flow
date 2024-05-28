@@ -16,15 +16,18 @@ import { portOfDestination } from "@/server/db/schema/psd/port-of-destination";
 import { placeOfDelivery } from "@/server/db/schema/psd/place-of-delivery";
 import { vesselName } from "@/server/db/schema/psd/vessel-name";
 import { salesOrder } from "@/server/db/schema/psd/sales-order";
+import { buyer } from "@/server/db/schema/psd/buyer";
+export const cifOrCnfEnum = z.enum(["CIF", "CNF"]);
+export const preferredCurrencyEnum = z.enum(["USD", "CAD"]);
 
 export const insertGeneralNameSchema = z.object({
-  id: z.number().optional(),
+  id: z.string().optional(),
   name: z.string(),
   orgId: z.string(),
 });
 
 export const insertGeneralCompleteSchema = z.object({
-  id: z.number().optional(),
+  id: z.string().optional(),
   name: z.string().trim().min(1),
   email: z.string().email().trim().min(1),
   countryCode: z.string().trim().min(1),
@@ -39,7 +42,7 @@ export const insertGeneralCompleteSchema = z.object({
 });
 
 export const insertSupplierSchema = createInsertSchema(supplier, {
-  id: z.number().optional(),
+  id: z.string().optional(),
   name: z.string().trim().min(1),
   email: z.string().email().trim().min(1),
   countryCode: z.string().trim().min(1),
@@ -56,7 +59,7 @@ export const insertSupplierSchema = createInsertSchema(supplier, {
 export const insertFreightForwarderSchema = createInsertSchema(
   freightForwarder,
   {
-    id: z.number().optional(),
+    id: z.string().optional(),
     email: z.string().email(),
     phone: z
       .string()
@@ -66,7 +69,7 @@ export const insertFreightForwarderSchema = createInsertSchema(
 );
 
 export const insertTruckingCompanySchema = createInsertSchema(truckingCompany, {
-  id: z.number().optional(),
+  id: z.string().optional(),
   email: z.string().email(),
   phone: z
     .string()
@@ -77,7 +80,7 @@ export const insertTruckingCompanySchema = createInsertSchema(truckingCompany, {
 export const insertCustomsHouseAgentSchema = createInsertSchema(
   customsHouseAgent,
   {
-    id: z.number().optional(),
+    id: z.string().optional(),
     email: z.string().email(),
     phone: z
       .string()
@@ -89,19 +92,19 @@ export const insertCustomsHouseAgentSchema = createInsertSchema(
 export const insertDescriptionOfGoodsSchema = createInsertSchema(
   descriptionOfGoods,
   {
-    id: z.number().optional(),
+    id: z.string().optional(),
   },
 );
 
 export const insertExportShippingInformationSchema = createInsertSchema(
   exportShippingInformation,
   {
-    id: z.number().optional(),
+    id: z.string().optional(),
   },
 );
 
 export const insertPSICAgencySchema = createInsertSchema(PSICAgency, {
-  id: z.number().optional(),
+  id: z.string().optional(),
   email: z.string().email(),
   phone: z
     .string()
@@ -110,32 +113,52 @@ export const insertPSICAgencySchema = createInsertSchema(PSICAgency, {
 });
 
 export const insertShippingLineSchema = createInsertSchema(shippingLine, {
-  id: z.number().optional(),
+  id: z.string().optional(),
 });
 
 export const insertPlaceOfLoadingSchema = createInsertSchema(placeOfLoading, {
-  id: z.number().optional(),
+  id: z.string().optional(),
 });
 
 export const insertPortOfLoadingSchema = createInsertSchema(portOfLoading, {
-  id: z.number().optional(),
+  id: z.string().optional(),
 });
 
 export const insertPortOfDestinationSchema = createInsertSchema(
   portOfDestination,
   {
-    id: z.number().optional(),
+    id: z.string().optional(),
   },
 );
 
 export const insertPlaceOfDeliverySchema = createInsertSchema(placeOfDelivery, {
-  id: z.number().optional(),
+  id: z.string().optional(),
 });
 
 export const insertVesselNameSchema = createInsertSchema(vesselName, {
-  id: z.number().optional(),
+  id: z.string().optional(),
 });
 
 export const insertSalesOrderSchema = createInsertSchema(salesOrder, {
-  id: z.number().optional(),
+  id: z.string().optional(),
+});
+
+export const insertBuyerSchema = createInsertSchema(buyer, {  
+  id: z.string().optional(),
+  name: z.string().trim().min(1),
+  cifOrCnf: cifOrCnfEnum,
+  address: z.string().trim().min(1),
+  countryCode: z.string().trim().min(1),
+  phone: z
+    .string()
+    .trim()
+    .refine(v.isMobilePhone)
+    .transform((v) => v as Value),
+  email: z.string().email().trim().min(1),
+  bank: z.string().trim().min(1),
+  customsHouseAgentId: z.string(),
+  proFormaInvoiceRequired: z.boolean(),
+  preferredCurrency: preferredCurrencyEnum,
+  portOfDestinationId: z.string(),
+  orgId: z.string(),
 });

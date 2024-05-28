@@ -3,7 +3,7 @@
 import { api } from "@/trpc/react";
 import PSDDescriptionOfGoodsEditForm from "./form";
 
-const SupplierPage = ({ params }: { params: { id: number } }) => {
+const SupplierPage = ({ params }: { params: { id: string } }) => {
   const descriptionOfGoods = api.descriptionOfGoods.getById.useQuery({
     id: params.id,
   }).data;

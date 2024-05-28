@@ -9,25 +9,30 @@ import {
   import { insertSupplierSchema as schema } from "./schemas.zod";
   import { supplier as table} from "../../../db/schema/psd/supplier";
   import { count } from "drizzle-orm";
-
+import { generateItemId } from "@/lib/utils";
  const Router = createTRPCRouter({
         create: managerProcedure.input(schema).mutation(async ({ ctx, input }) => {
             try {
-                await ctx.db.insert(table).values(input);
+                const id = generateItemId(input.name);
+                const newItem = { ...input, id };
+                await ctx.db.insert(table).values(newItem);
             } catch (err) {
                 throw new TRPCError({ code: "INTERNAL_SERVER_ERROR", cause: err });
             }
         }),
         delete: managerProcedure
-            .input(z.object({ id: z.coerce.number() }))
+            .input(z.object({ id: z.string() }))
             .mutation(async ({ ctx, input }) => {
                 await ctx.db.delete(table).where(eq(table.id, input.id));
             }),
         update: managerProcedure.input(schema).mutation(async ({ ctx, input }) => {
+            if (!input.id) {
+                throw new Error('id is required');
+            }
             await ctx.db
                 .update(table)
                 .set(input)
-                .where(eq(table.id, Number(input.id)))
+                .where(eq(table.id, (input.id)))
                 .returning({ table });
         }),
         getAll: protectedProcedure
@@ -57,7 +62,7 @@ import {
             }
         }),
         getById: protectedProcedure
-            .input(z.object({ id: z.coerce.number() }))
+            .input(z.object({ id: z.string() }))
             .query(async ({ ctx, input }) => {
                 try {
                     const result = await ctx.db

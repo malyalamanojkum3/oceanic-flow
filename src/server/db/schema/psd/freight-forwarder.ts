@@ -13,7 +13,7 @@ export const phone = customType<{ data: Value }>({
 });
 
 export const freightForwarder = createTable("freight-forwarder", {
-  id: serial("id").notNull().primaryKey(),
+  id: varchar("id").notNull().primaryKey(),
   name: varchar("name", { length: 255 }).notNull(),
   email: varchar("email", { length: 255 }).notNull(),
   countryCode: varchar("countryCode", { length: 8 }).notNull(),

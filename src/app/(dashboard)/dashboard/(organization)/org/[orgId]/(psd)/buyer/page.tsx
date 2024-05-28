@@ -1,0 +1,45 @@
+"use client";
+import { uiStore } from "@/app/states/ui";
+import { api } from "@/trpc/react";
+import { DataTable } from "@/components/primitives/data-table";
+import { columns } from "./columns";
+import CreatePSDButton from "@/components/dashboard/forms/create-button";
+import { Pagination } from "@/components/primitives/pagination";
+import { Skeleton } from "@/components/primitives/skeleton";
+const itemsPerPage = 5;
+
+const PSDBuyerPage = ({
+  searchParams,
+}: {
+  searchParams?: {
+    query?: string;
+    page?: string;
+  };
+}) => {
+  const currentOrgId = uiStore.get.currentOrgId();
+  const currentPage = Number(searchParams?.page) || 1;
+  const Items = api.buyer.getAll.useQuery({ orgId: currentOrgId, page: currentPage, itemsPerPage });
+  const totalPages = Items.data?.totalPages ?? 0;
+
+  const flattenedData = Items.data?.items?.map((item) => ({
+    ...item,
+    proFormaInvoiceRequired: item.proFormaInvoiceRequired ? 'True' : 'False',
+    portPreference : item.portPreference.name,
+    customsHouseAgent: item.customsHouseAgent.name,
+  })) ?? [];
+
+  if(Items.isLoading) return <Skeleton className="h-96" />;
+  if(Items.error) return <div>Error: {Items.error.message}</div>;
+  return (
+    <div className="flex w-full flex-col">
+      <CreatePSDButton />
+      <DataTable columns={columns} data={flattenedData} />
+      <Pagination
+        currentPage={currentPage}
+        totalPages={totalPages}
+      />
+    </div>
+  );
+};
+
+export default PSDBuyerPage;

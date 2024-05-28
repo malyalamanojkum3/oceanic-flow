@@ -3,7 +3,7 @@
 import { api } from "@/trpc/react";
 import PSDCompleteForm from "@/components/dashboard/forms/psd/complete-form";
 
-const PSDEditPage = ({ params }: { params: { id: number } }) => {
+const PSDEditPage = ({ params }: { params: { id: string } }) => {
   const apiUtils = api.useUtils().customsHouseAgent;
   const customsHouseAgent = api.customsHouseAgent.getById.useQuery({
     id: params.id,

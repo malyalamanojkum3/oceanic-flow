@@ -7,7 +7,7 @@ const createTable = pgTableCreator((name) => `oceanic-flow_${name}`);
 export const exportShippingInformation = createTable(
   "export-shipping-information",
   {
-    id: serial("id").notNull().primaryKey(),
+    id: varchar("id").notNull().primaryKey(),
     shipper: varchar("shipper", { length: 255 }).notNull(),
     notifyParty: varchar("notify_party", { length: 255 }).notNull(),
     consignee: varchar("consignee", { length: 255 }).notNull(),

@@ -15,7 +15,7 @@ export const phone = customType<{ data: Value }>({
 });
 
 export const supplier = createTable("supplier", {
-  id: serial("id").notNull().primaryKey(),
+  id: varchar("id").notNull().primaryKey(),
   type: typeEnum("type").default("supplier").notNull(),
   name: varchar("name", { length: 255 }).notNull(),
   email: varchar("email", { length: 255 }).notNull(),

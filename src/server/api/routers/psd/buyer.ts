@@ -6,10 +6,10 @@ import {
   import { TRPCError } from "@trpc/server";
   import { z } from "zod";
   import { eq } from "drizzle-orm";
-  import { insertVesselNameSchema as schema } from "./schemas.zod";
-  import { vesselName as table} from "../../../db/schema/psd/vessel-name";
+  import { insertBuyerSchema as schema } from "./schemas.zod";
+  import { buyer as table} from "../../../db/schema/psd/buyer";
   import { count } from "drizzle-orm";
-import { generateItemId } from "@/lib/utils";
+  import { generateItemId } from "@/lib/utils";
  const Router = createTRPCRouter({
         create: managerProcedure.input(schema).mutation(async ({ ctx, input }) => {
             try {
@@ -49,13 +49,16 @@ import { generateItemId } from "@/lib/utils";
                 const totalPages = Math.ceil(totalItems / input.itemsPerPage);
 
                 // Fetch items for current page
-                const items = await ctx.db
-                    .select()
-                    .from(table)
-                    .where(eq(table.orgId, input.orgId))
-                    .limit(input.itemsPerPage)
-                    .offset((input.page - 1) * input.itemsPerPage);
-
+                const items = await ctx.db.query.buyer.findMany({
+                    where: (table, { eq }) => eq(table.orgId, input.orgId), 
+                    limit: input.itemsPerPage,
+                    offset: (input.page - 1) * input.itemsPerPage,
+                    with: {
+                        org: true,
+                        customsHouseAgent: true,
+                        portPreference: true,
+                    },
+                });
                 return { items, totalPages };
             } catch (err) {
                 throw new TRPCError({ code: "INTERNAL_SERVER_ERROR", cause: err });
