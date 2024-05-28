@@ -1,30 +1,28 @@
 "use client";
-import { useState, useEffect } from 'react';
 import { uiStore } from "@/app/states/ui";
 import { api } from "@/trpc/react";
 import { DataTable } from "@/components/primitives/data-table";
 import { columns } from "./columns";
 import CreatePSDButton from "@/components/dashboard/forms/create-button";
 import { Pagination } from "@/components/primitives/pagination";
+import { Skeleton } from "@/components/primitives/skeleton";
 const itemsPerPage = 1;
-const PSDSupplierPage = () => {
-  const [currentPage, setCurrentPage] = useState(1);
+const PSDSupplierPage = ({
+  searchParams,
+}: {
+  searchParams?: {
+    query?: string;
+    page?: string;
+  };
+}) => {
   const currentOrgId = uiStore.get.currentOrgId();
+  const currentPage = Number(searchParams?.page) || 1;
   const Items = api.supplier.getAll.useQuery({ orgId: currentOrgId, page: currentPage, itemsPerPage });
   
-  useEffect(() => {
-    Items.refetch();
-  }, [currentPage]);
-
   const totalPages = Items.data?.totalPages ?? 0;
 
-  if(Items.isLoading) return <div>Loading...</div>;
-
-  const handlePageChange = (page: number) => {
-    if (page >= 1 && page <= totalPages) {
-      setCurrentPage(page);
-    }
-  };
+  if(Items.isLoading) return <Skeleton className="h-96" />;
+  if(Items.error) return <div>Error: {Items.error.message}</div>;
   return (
     <div className="flex w-full flex-col">
       <CreatePSDButton />
@@ -32,7 +30,6 @@ const PSDSupplierPage = () => {
       <Pagination
         currentPage={currentPage}
         totalPages={totalPages}
-        onPageChange={handlePageChange}
       />
     </div>
   );

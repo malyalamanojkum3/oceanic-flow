@@ -1,4 +1,4 @@
-import { createTRPCRouter, protectedProcedure, adminProcedure, managerProcedure } from "../trpc";
+import { createTRPCRouter, protectedProcedure, adminProcedure, } from "../trpc";
 import {
   organizations,
   usersToOrganizations,

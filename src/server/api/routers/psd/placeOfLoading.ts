@@ -39,7 +39,7 @@ import {
                 .select({ count: count() })
                 .from(table)
                 .where(eq(table.orgId, input.orgId));
-                const totalItems = totalItemsResult[0]?.count || 0;
+                const totalItems = totalItemsResult[0]?.count ?? 0;
                 // Calculate total pages
                 const totalPages = Math.ceil(totalItems / input.itemsPerPage);
 

@@ -1,15 +1,21 @@
 import React from "react";
-
+import { usePathname, useSearchParams } from "next/navigation";
+import { useRouter } from "next/navigation"
 interface PaginationProps {
   currentPage: number;
   totalPages: number;
-  onPageChange: (page: number) => void;
 }
 
-export function Pagination({ currentPage, totalPages, onPageChange }: PaginationProps) {
-  const handlePageChange = (page: number) => {
-    if (page >= 1 && page <= totalPages) {
-      onPageChange(page);
+export function Pagination({ currentPage, totalPages, }: PaginationProps) {
+  const pathname = usePathname();
+  const searchParams = useSearchParams();
+  const router = useRouter();
+  const handlePageChange = (pageNumber: number) => {
+    if (pageNumber >= 1 && pageNumber <= totalPages) {
+    const params = new URLSearchParams(searchParams);
+    params.set("page", pageNumber.toString());
+    const newUrl = `${pathname}?${params.toString()}`;
+    router.push(newUrl);
     }
   };
 
