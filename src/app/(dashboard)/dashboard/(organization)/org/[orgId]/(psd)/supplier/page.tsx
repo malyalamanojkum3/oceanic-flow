@@ -6,7 +6,7 @@ import { columns } from "./columns";
 import CreatePSDButton from "@/components/dashboard/forms/create-button";
 import { Pagination } from "@/components/primitives/pagination";
 import { Skeleton } from "@/components/primitives/skeleton";
-const itemsPerPage = 1;
+const itemsPerPage = 5;
 const PSDSupplierPage = ({
   searchParams,
 }: {
