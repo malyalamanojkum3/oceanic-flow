@@ -31,7 +31,7 @@ import { useRouter } from "next/navigation";
 import { uiStore } from "@/app/states/ui";
 import { PhoneInput } from "@/components/primitives/phone-input";
 import { type Country } from "react-phone-number-input";
-
+import { useCheckExists } from "@/lib/checkExists";
 function PSDSupplierCreateForm() {
   const countries = useMemo(() => getCountryDataList(), []);
   const router = useRouter();
@@ -65,6 +65,8 @@ const portOfDestinations = api.portOfDestination.getAll.useQuery({ orgId: curren
       toast.error("ERORR");
     },
   });
+  const checkNameExists = api.buyer.checkNameExists.useMutation();
+  useCheckExists(form, 'name', checkNameExists);
 
   const onSubmit = (values: z.infer<typeof insertBuyerSchema>) => {
     create.mutate({ ...values, orgId: currentOrgId });
@@ -301,6 +303,9 @@ const portOfDestinations = api.portOfDestination.getAll.useQuery({ orgId: curren
             )}
           />
           <Button type="submit">Create Supplier</Button>
+          <Button type="button" className="ml-2" onClick={() => router.push("./")}>
+            Cancel
+          </Button>
         </form>
       </Form>
     </>

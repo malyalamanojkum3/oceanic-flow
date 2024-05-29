@@ -18,7 +18,7 @@ import { api } from "@/trpc/react";
 import { insertExportShippingInformationSchema } from "@/server/api/routers/psd/schemas.zod";
 import { toast } from "sonner";
 import { useRouter } from "next/navigation";
-
+import { useCheckExists } from "@/lib/checkExists";
 function PSDExportShippingInformationEditForm({
   defaultValues,
 }: {
@@ -43,11 +43,14 @@ function PSDExportShippingInformationEditForm({
       toast.error("ERORR");
     },
   });
+  const checkNameExists = api.exportShippingInformation.checkNameExists.useMutation();
+  useCheckExists(form, 'shipper', checkNameExists,defaultValues.shipper);
+
 
   const onSubmit = async (
     values: z.infer<typeof insertExportShippingInformationSchema>,
   ) => {
-    update.mutate(values);
+    await update.mutateAsync(values);
     await utils.exportShippingInformation.getById.invalidate();
   };
 
@@ -108,6 +111,9 @@ function PSDExportShippingInformationEditForm({
             )}
           />
           <Button type="submit">Create Description Of Goods</Button>
+          <Button type="button" className="ml-2" onClick={() => router.push("./")}>
+            Cancel
+          </Button>
         </form>
       </Form>
     </>

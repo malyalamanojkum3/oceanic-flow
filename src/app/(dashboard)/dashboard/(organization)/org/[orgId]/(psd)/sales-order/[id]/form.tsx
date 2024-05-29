@@ -18,7 +18,7 @@ import { zodResolver } from "@hookform/resolvers/zod";
 import { api } from "@/trpc/react";
 import { toast } from "sonner";
 import { type z } from "zod";
-
+import { useCheckExists } from "@/lib/checkExists";
 function PSDSalesOrderEditForm({
   defaultValues,
 }: {
@@ -42,8 +42,11 @@ function PSDSalesOrderEditForm({
       toast.error("ERORR");
     },
   });
+  const checkNameExists = api.salesOrder.checkNameExists.useMutation();
+  useCheckExists(form, 'specialTerms', checkNameExists, defaultValues.specialTerms);
+
   const onSubmit = async(values: z.infer<typeof insertSalesOrderSchema>) => {
-    update.mutate(values);
+    await update.mutateAsync(values);
     await utils.salesOrder.getById.invalidate();
   };
   return (
@@ -64,6 +67,9 @@ function PSDSalesOrderEditForm({
             )}
           />
           <Button type="submit">Create Sales Order</Button>
+          <Button type="button" className="ml-2" onClick={() => router.push("./")}>
+            Cancel
+          </Button>
         </form>
       </Form>
     </>

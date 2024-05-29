@@ -18,7 +18,7 @@ import { api } from "@/trpc/react";
 import { insertDescriptionOfGoodsSchema } from "@/server/api/routers/psd/schemas.zod";
 import { toast } from "sonner";
 import { useRouter } from "next/navigation";
-
+import { useCheckExists } from "@/lib/checkExists";
 function PSDDescriptionOfGoodsEditForm({
   defaultValues,
 }: {
@@ -43,6 +43,9 @@ function PSDDescriptionOfGoodsEditForm({
       toast.error("ERORR");
     },
   });
+  const checkNameExists = api.descriptionOfGoods.checkNameExists.useMutation();
+  useCheckExists(form, 'qualityDescription', checkNameExists,defaultValues.qualityDescription);
+
 
   const onSubmit = async (
     values: z.infer<typeof insertDescriptionOfGoodsSchema>,
@@ -108,6 +111,9 @@ function PSDDescriptionOfGoodsEditForm({
             )}
           />
           <Button type="submit">Create Description Of Goods</Button>
+          <Button type="button" className="ml-2" onClick={() => router.push("./")}>
+            Cancel
+          </Button>
         </form>
       </Form>
     </>

@@ -8,7 +8,7 @@ export const descriptionOfGoods = createTable("description-of-goods", {
   id: varchar("id").notNull().primaryKey(),
   qualityDescription: varchar("quality_description", {
     length: 255,
-  }).notNull(),
+  }).notNull().unique(),
   mainGrade: varchar("main_grade", { length: 255 }).notNull(),
   hsCode: varchar("hs_code", { length: 255 }).notNull(),
   stream: varchar("stream", { length: 15 }).notNull(),

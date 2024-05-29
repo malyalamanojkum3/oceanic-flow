@@ -50,6 +50,20 @@ const customsHouseAgentRouter = createTRPCRouter({
                     throw new TRPCError({ code: "INTERNAL_SERVER_ERROR", cause: err });
                 }
             }),
+            checkNameExists: protectedProcedure
+            .input(z.string())
+            .mutation(async ({ ctx, input }) => {
+                try {
+                    const result = await ctx.db
+                        .select()
+                        .from(table)
+                        .where(eq(table.name, input));
+                    const exists= result.length > 0;
+                    return exists;
+                } catch (err) {
+                    throw new TRPCError({ code: "INTERNAL_SERVER_ERROR", cause: err });
+                }
+            }),
         getPageItems: protectedProcedure
         .input(z.object({ orgId: z.string(), page: z.number(), itemsPerPage: z.number() }))
         .query(async ({ ctx, input }) => {

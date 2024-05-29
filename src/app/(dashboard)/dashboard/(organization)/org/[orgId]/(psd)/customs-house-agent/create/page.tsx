@@ -10,6 +10,7 @@ const PSDCreatePage = () => {
         variant="create"
         formName="Trucking Company"
         apiRoute={api.customsHouseAgent.create}
+        checkNameExists={api.customsHouseAgent.checkNameExists}
       />
     </div>
   );

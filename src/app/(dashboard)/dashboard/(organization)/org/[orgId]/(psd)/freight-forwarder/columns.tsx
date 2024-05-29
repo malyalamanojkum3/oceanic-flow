@@ -46,9 +46,11 @@ const CellAction = ({
         </DropdownMenuTrigger>
         <DropdownMenuContent align="end">
           <DropdownMenuLabel>Actions</DropdownMenuLabel>
+          {/*
           <SheetTrigger>
             <DropdownMenuItem>View Freight Forwarder</DropdownMenuItem>
           </SheetTrigger>
+           */}
 
           <DropdownMenuItem
             onClick={() => router.push(`${pn}/${row.original.id}`)}
@@ -88,6 +90,14 @@ export const columns: ColumnDef<z.infer<typeof insertGeneralCompleteSchema>>[] =
     {
       accessorKey: "phone",
       header: "Phone",
+    },
+    {
+      accessorKey: "address",
+      header: "Address",
+    },
+    {
+      accessorKey: "bank",
+      header: "Bank",
     },
     {
       id: "actions",

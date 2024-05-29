@@ -11,10 +11,6 @@ import {
 } from "@/components/primitives/form";
 import { Input } from "@/components/primitives/input";
 import {
-  RadioGroup,
-  RadioGroupItem,
-} from "@/components/primitives/radio-group";
-import {
   Select,
   SelectContent,
   SelectItem,
@@ -35,7 +31,7 @@ import { useRouter } from "next/navigation";
 import { PhoneInput } from "@/components/primitives/phone-input";
 import type { Country, Value } from "react-phone-number-input";
 import { uiStore } from "@/app/states/ui";
-
+import { useCheckExists } from "@/lib/checkExists";
 function PSDSupplierEditForm({
   defaultValues,
 }: {
@@ -64,9 +60,11 @@ function PSDSupplierEditForm({
       toast.error("ERORR");
     },
   });
+  const checkNameExists = api.buyer.checkNameExists.useMutation();
+  useCheckExists(form, 'name', checkNameExists, defaultValues.name);
 
   const onSubmit = async (values: z.infer<typeof insertBuyerSchema>) => {
-    update.mutate(values);
+    await update.mutateAsync(values);
     await utils.buyer.getById.invalidate();
   };
 
@@ -161,6 +159,9 @@ function PSDSupplierEditForm({
           <FormField
             control={form.control}
             name="bank"
+            rules={{
+              required: false
+            }}
             render={({ field }) => (
               <FormItem className="space-y-1">
                 <FormLabel>Bank Details</FormLabel>
@@ -300,6 +301,9 @@ function PSDSupplierEditForm({
             )}
           />
           <Button type="submit">Save Changes</Button>
+          <Button type="button" className="ml-2" onClick={() => router.push("./")}>
+            Cancel
+          </Button>
         </form>
       </Form>
     </>

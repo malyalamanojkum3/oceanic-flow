@@ -10,6 +10,7 @@ const PSDCreatePage = () => {
         variant="create"
         formName="PSIC Agency"
         apiRoute={api.PSICAgency.create}
+        checkNameExists={api.PSICAgency.checkNameExists}
       />
     </div>
   );

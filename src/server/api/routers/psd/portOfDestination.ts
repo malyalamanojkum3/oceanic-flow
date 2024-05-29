@@ -74,6 +74,20 @@ import { generateItemId } from "@/lib/utils";
                 throw new TRPCError({ code: "INTERNAL_SERVER_ERROR", cause: err });
             }
         }),
+        checkNameExists: protectedProcedure
+            .input(z.string())
+            .mutation(async ({ ctx, input }) => {
+                try {
+                    const result = await ctx.db
+                        .select()
+                        .from(table)
+                        .where(eq(table.name, input));
+                    const exists= result.length > 0;
+                    return exists;
+                } catch (err) {
+                    throw new TRPCError({ code: "INTERNAL_SERVER_ERROR", cause: err });
+                }
+            }),
         getById: protectedProcedure
             .input(z.object({ id: z.string() }))
             .query(async ({ ctx, input }) => {

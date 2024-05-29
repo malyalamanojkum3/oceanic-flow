@@ -19,7 +19,7 @@ import { useRouter } from "next/navigation";
 import { uiStore } from "@/app/states/ui";
 import type { AppRouterLike, AppRouterUtilsLike } from "@/server/api/root";
 import { insertGeneralNameSchema } from "@/server/api/routers/psd/schemas.zod";
-
+import { useCheckExists } from "@/lib/checkExists";
 type Props =
   | {
       defaultValues?: z.infer<typeof insertGeneralNameSchema>;
@@ -31,6 +31,12 @@ type Props =
         | "portOfDestination"
         | "vesselName"
         | "shippingLine"]["create" | "update"];
+      checkNameExists: AppRouterLike[
+        | "portOfLoading"
+        | "placeOfLoading"
+        | "portOfDestination"
+        | "vesselName"
+        | "shippingLine"]["checkNameExists"];
       utils?: AppRouterUtilsLike[
         | "portOfLoading"
         | "placeOfLoading"
@@ -48,6 +54,12 @@ type Props =
         | "portOfDestination"
         | "vesselName"
         | "shippingLine"]["create" | "update"];
+      checkNameExists: AppRouterLike[
+        | "portOfLoading"
+        | "placeOfLoading"
+        | "portOfDestination"
+        | "vesselName"
+        | "shippingLine"]["checkNameExists"];
       utils: AppRouterUtilsLike[
         | "portOfLoading"
         | "placeOfLoading"
@@ -79,9 +91,11 @@ const PSDNameForm = (props: Props) => {
       toast.error("ERROR");
     },
   });
+  const api = props.checkNameExists.useMutation();
+   useCheckExists(form, 'name', api, props.defaultValues?.name);
 
   const onSubmit = async (values: z.infer<typeof insertGeneralNameSchema>) => {
-    call.mutate(values);
+    await call.mutateAsync(values);
     if (!utils) return;
     await utils.getById.invalidate();
   };
@@ -105,6 +119,9 @@ const PSDNameForm = (props: Props) => {
           />
           <Button type="submit">
             {props.variant === "create" ? `Create ${formName}` : "Save changes"}
+          </Button>
+          <Button type="button" className="ml-2" onClick={() => router.push("./")}>
+            Cancel
           </Button>
         </form>
       </Form>

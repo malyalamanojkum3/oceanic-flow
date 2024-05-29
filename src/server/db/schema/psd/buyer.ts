@@ -20,13 +20,13 @@ export const phone = customType<{ data: Value }>({
 
 export const buyer = createTable("buyer", {
   id: varchar("id").notNull().primaryKey(),
-  name: varchar("name", { length: 255 }).notNull(),
+  name: varchar("name", { length: 255 }).notNull().unique(),
   cifOrCnf: cifOrCnfEnum("cifOrCnf").notNull(),
   address: varchar("address", { length: 255 }).notNull(),
   countryCode: varchar("countryCode", { length: 8 }).notNull(),
   phone: phone("phone", { length: 15 }).notNull(),
   email: varchar("email", { length: 255 }).notNull(),
-  bank: varchar("bank", { length: 255 }).notNull(),
+  bank: varchar("bank", { length: 255 }),
   customsHouseAgentId: varchar("customsHouseAgentId")
     .notNull()
     .references(() => customsHouseAgent.id, { onDelete: "cascade" }),

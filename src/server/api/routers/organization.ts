@@ -10,7 +10,7 @@ import { z } from "zod";
 import slugify from "slugify";
 import { TRPCError } from "@trpc/server";
 import { users } from "@/server/db/schema/auth";
-
+import { convertRoleToPermission } from "@/lib/permissions";
 const nanoid = customAlphabet("abcdefghijklmnopqrstuvxyz0123456789", 14);
 
 export const organizationRouter = createTRPCRouter({
@@ -34,7 +34,7 @@ export const organizationRouter = createTRPCRouter({
         userId: ctx.session.user.id,
         organizationId: org[0].id,
         role: "admin",
-        permissions: 4,
+        permissions: 7,
       });
     }),
   getUserOrgs: protectedProcedure.query(async ({ ctx }) => {

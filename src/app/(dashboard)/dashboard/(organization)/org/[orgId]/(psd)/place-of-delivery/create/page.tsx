@@ -11,6 +11,7 @@ const PSDCreatePage = () => {
         variant="create"
         formName="Port of Delivery"
         apiRoute={api.placeOfDelivery.create}
+        checkNameExists={api.placeOfDelivery.checkNameExists} 
       />
     </div>
   );

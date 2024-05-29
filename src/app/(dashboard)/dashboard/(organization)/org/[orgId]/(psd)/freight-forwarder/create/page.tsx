@@ -10,6 +10,7 @@ const PSDPage = () => {
         variant="create"
         formName="Freight Forwarder"
         apiRoute={api.freightForwarder.create}
+        checkNameExists={api.freightForwarder.checkNameExists}
       />
     </div>
   );

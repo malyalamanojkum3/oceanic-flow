@@ -37,7 +37,7 @@ export const insertGeneralCompleteSchema = z.object({
     .refine(v.isMobilePhone)
     .transform((v) => v as Value),
   address: z.string().trim().min(1),
-  bank: z.string().trim().min(1),
+  bank: z.string().trim().nullable().optional(),
   orgId: z.string(),
 });
 
@@ -52,7 +52,8 @@ export const insertSupplierSchema = createInsertSchema(supplier, {
     .refine(v.isMobilePhone)
     .transform((v) => v as Value),
   address: z.string().trim().min(1),
-  bank: z.string().trim().min(1),
+  bank: z.string().trim().nullable().optional(),
+
   orgId: z.string(),
 });
 
@@ -155,7 +156,7 @@ export const insertBuyerSchema = createInsertSchema(buyer, {
     .refine(v.isMobilePhone)
     .transform((v) => v as Value),
   email: z.string().email().trim().min(1),
-  bank: z.string().trim().min(1),
+  bank: z.string().trim().nullable().optional(),
   customsHouseAgentId: z.string(),
   proFormaInvoiceRequired: z.boolean(),
   preferredCurrency: preferredCurrencyEnum,

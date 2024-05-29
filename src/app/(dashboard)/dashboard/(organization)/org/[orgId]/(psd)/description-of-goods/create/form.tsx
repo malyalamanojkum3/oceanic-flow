@@ -19,6 +19,7 @@ import { insertDescriptionOfGoodsSchema } from "@/server/api/routers/psd/schemas
 import { toast } from "sonner";
 import { useRouter } from "next/navigation";
 import { uiStore } from "@/app/states/ui";
+import { useCheckExists } from "@/lib/checkExists";
 
 function PSDDescriptionOfGoodsCreateForm() {
   const router = useRouter();
@@ -44,6 +45,9 @@ function PSDDescriptionOfGoodsCreateForm() {
       toast.error("ERORR");
     },
   });
+  const checkNameExists = api.descriptionOfGoods.checkNameExists.useMutation();
+  useCheckExists(form, 'qualityDescription', checkNameExists);
+
 
   const onSubmit = (values: z.infer<typeof insertDescriptionOfGoodsSchema>) => {
     create.mutate({ ...values, orgId: currentOrgId });
@@ -106,6 +110,9 @@ function PSDDescriptionOfGoodsCreateForm() {
             )}
           />
           <Button type="submit">Create Description Of Goods</Button>
+          <Button type="button" className="ml-2" onClick={() => router.push("./")}>
+            Cancel
+          </Button>
         </form>
       </Form>
     </>
