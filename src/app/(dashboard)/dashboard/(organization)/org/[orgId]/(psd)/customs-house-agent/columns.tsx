@@ -83,7 +83,7 @@ export const columns: ColumnDef<
           size={20}
           onClick={async () => {
             del.mutate({ id: row.original.id! , orgId: currentOrgId});
-            await utils.customsHouseAgent.getAll.refetch();
+            await utils.customsHouseAgent.getPageItems.refetch();
           }}
           className="cursor-pointer text-destructive"
         />

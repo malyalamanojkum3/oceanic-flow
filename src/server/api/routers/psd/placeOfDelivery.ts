@@ -36,7 +36,7 @@ import { generateItemId } from "@/lib/utils";
                 .where(eq(table.id, (input.id)))
                 .returning({ table });
         }),
-        getAll: protectedProcedure
+        getPageItems: protectedProcedure
         .input(z.object({ orgId: z.string(), page: z.number(), itemsPerPage: z.number() }))
         .query(async ({ ctx, input }) => {
             try {

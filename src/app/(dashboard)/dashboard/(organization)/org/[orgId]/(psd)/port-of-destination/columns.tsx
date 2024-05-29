@@ -59,7 +59,7 @@ export const columns: ColumnDef<z.infer<typeof insertGeneralNameSchema>>[] = [
           size={20}
           onClick={async () => {
             del.mutate({ id: row.original.id!, orgId: currentOrgId});
-            await utils.portOfDestination.getAll.refetch();
+            await utils.portOfDestination.getPageItems.refetch();
           }}
           className="cursor-pointer text-destructive"
         />

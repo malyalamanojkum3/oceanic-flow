@@ -18,7 +18,7 @@ const PSDBuyerPage = ({
 }) => {
   const currentOrgId = uiStore.get.currentOrgId();
   const currentPage = Number(searchParams?.page) || 1;
-  const Items = api.buyer.getAll.useQuery({ orgId: currentOrgId, page: currentPage, itemsPerPage });
+  const Items = api.buyer.getPageItems.useQuery({ orgId: currentOrgId, page: currentPage, itemsPerPage });
   const totalPages = Items.data?.totalPages ?? 0;
 
   const flattenedData = Items.data?.items?.map((item) => ({

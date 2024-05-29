@@ -99,7 +99,7 @@ export const columns: ColumnDef<z.infer<typeof insertGeneralCompleteSchema>>[] =
         const utils = api.useUtils();
         const del = api.freightForwarder.delete.useMutation({
           onSuccess: async () => {
-            await utils.freightForwarder.getAll.refetch();
+            await utils.freightForwarder.getPageItems.refetch();
           },
         });
 

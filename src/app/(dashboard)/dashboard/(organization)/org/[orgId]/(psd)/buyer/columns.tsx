@@ -24,6 +24,7 @@ interface Buyer {
   phone: string;
   address: string;
   bank: string;
+  proFormaInvoiceRequired: string;
   cifOrCnf: string;
   preferredCurrency: string;
   customsHouseAgent: string;
@@ -118,7 +119,7 @@ export const columns: ColumnDef<Buyer>[]= [
           size={20}
           onClick={async () => {
             deleteSupplier.mutate({ id: row.original.id, orgId: currentOrgId });
-            await utils.supplier.getAll.refetch();
+            await utils.supplier.getPageItems.refetch();
           }}
           className="cursor-pointer text-destructive"
         />

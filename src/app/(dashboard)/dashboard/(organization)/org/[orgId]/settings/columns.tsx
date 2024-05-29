@@ -61,7 +61,7 @@ return (
               userId: row.original.userId,
               permissions: convertRoleToPermission(selectedRole),
             });
-           await utils.orgs.getAllOrgUsers.refetch();
+           await utils.orgs.getPageItemsOrgUsers.refetch();
           } catch (error) {
             console.error(error);
           }
@@ -120,7 +120,7 @@ export const columns: ColumnDef<UserData>[] = [
             onClick={async (event) => {
               try {
                 await deleteUserOrg.mutateAsync({ userId: row.original.userId, orgId: currentOrgId });
-                await utils.orgs.getAllOrgUsers.refetch();
+                await utils.orgs.getPageItemsOrgUsers.refetch();
               } catch (error) {
                 console.error(error);
               }

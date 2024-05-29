@@ -45,7 +45,7 @@ export const organizationRouter = createTRPCRouter({
       },
     });
   }),
-  getAllOrgUsers: protectedProcedure
+  getPageItemsOrgUsers: protectedProcedure
     .input(z.object({ id: z.string() }))
     .query(async ({ ctx, input }) => {
       const users = await ctx.db.query.usersToOrganizations.findMany({

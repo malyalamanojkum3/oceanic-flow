@@ -17,7 +17,7 @@ const PSD = ({
 }) => {
   const currentOrgId = uiStore.get.currentOrgId();
   const currentPage = Number(searchParams?.page) || 1;
-  const Items = api.placeOfDelivery.getAll.useQuery({ orgId: currentOrgId, page: currentPage, itemsPerPage });
+  const Items = api.placeOfDelivery.getPageItems.useQuery({ orgId: currentOrgId, page: currentPage, itemsPerPage });
   
   const totalPages = Items.data?.totalPages ?? 0;
 

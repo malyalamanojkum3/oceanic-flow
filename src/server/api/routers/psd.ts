@@ -35,7 +35,7 @@ export function createGenericRouter({
         .where(eq(table.id, Number(input.id)))
         .returning({ table });
     }),
-    getAll: protectedProcedure
+    getPageItems: protectedProcedure
       .input(z.object({ orgId: z.string() }))
       .query(async ({ ctx, input }) => {
         try {

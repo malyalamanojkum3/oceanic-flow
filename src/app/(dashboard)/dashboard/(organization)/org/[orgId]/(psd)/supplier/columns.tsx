@@ -85,7 +85,7 @@ export const columns: ColumnDef<z.infer<typeof insertSupplierSchema>>[] = [
           size={20}
           onClick={async () => {
             deleteSupplier.mutate({ id: row.original.id!, orgId: currentOrgId });
-            await utils.supplier.getAll.refetch();
+            await utils.supplier.getPageItems.refetch();
           }}
           className="cursor-pointer text-destructive"
         />

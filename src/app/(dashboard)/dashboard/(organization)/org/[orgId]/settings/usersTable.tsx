@@ -5,7 +5,7 @@ import { DataTable } from "@/components/primitives/data-table";
 import { columns } from "./columns";
 const UsersPage = () => {
   const currentOrgId = uiStore.get.currentOrgId();
-    const users = api.orgs.getAllOrgUsers.useQuery({ id: currentOrgId }); 
+    const users = api.orgs.getPageItemsOrgUsers.useQuery({ id: currentOrgId }); 
     if(users.isLoading) return <div>Loading...</div>;
 
     const flattenedData = users.data?.map(({ user, role,userId }) => ({

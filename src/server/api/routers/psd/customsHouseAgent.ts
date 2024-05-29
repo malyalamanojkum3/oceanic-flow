@@ -38,6 +38,19 @@ const customsHouseAgentRouter = createTRPCRouter({
                 .returning({ table });
         }),
         getAll: protectedProcedure
+            .input(z.object({ orgId: z.string() }))
+            .query(async ({ ctx, input }) => {
+                try {
+                    const items = await ctx.db
+                        .select()
+                        .from(table)
+                        .where(eq(table.orgId, input.orgId));
+                    return items;
+                } catch (err) {
+                    throw new TRPCError({ code: "INTERNAL_SERVER_ERROR", cause: err });
+                }
+            }),
+        getPageItems: protectedProcedure
         .input(z.object({ orgId: z.string(), page: z.number(), itemsPerPage: z.number() }))
         .query(async ({ ctx, input }) => {
             try {

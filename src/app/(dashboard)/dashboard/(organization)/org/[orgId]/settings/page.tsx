@@ -88,7 +88,7 @@ const DashboardOrgSettingsPage = () => {
       role: role,
       permissions: convertRoleToPermission(role),
     });
-    await utils.orgs.getAllOrgUsers.refetch();
+    await utils.orgs.getPageItemsOrgUsers.refetch();
     // reset form
     form.reset();
   };

@@ -59,7 +59,7 @@ export const columns: ColumnDef<z.infer<typeof insertSalesOrderSchema>>[] = [
           size={20}
           onClick={async () => {
             del.mutate({ id: row.original.id!, orgId: currentOrgId});
-            await utils.salesOrder.getAll.refetch();
+            await utils.salesOrder.getPageItems.refetch();
           }}
           className="cursor-pointer text-destructive"
         />

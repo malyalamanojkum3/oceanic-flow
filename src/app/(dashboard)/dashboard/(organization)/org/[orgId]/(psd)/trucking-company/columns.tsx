@@ -80,7 +80,7 @@ export const columns: ColumnDef<z.infer<typeof insertTruckingCompanySchema>>[] =
             size={20}
             onClick={async () => {
               del.mutate({ id: row.original.id!, orgId: currentOrgId});
-              await utils.truckingCompany.getAll.refetch();
+              await utils.truckingCompany.getPageItems.refetch();
             }}
             className="cursor-pointer text-destructive"
           />

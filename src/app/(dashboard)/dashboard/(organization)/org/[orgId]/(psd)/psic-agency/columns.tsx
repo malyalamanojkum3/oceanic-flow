@@ -79,7 +79,7 @@ export const columns: ColumnDef<z.infer<typeof insertPSICAgencySchema>>[] = [
           size={20}
           onClick={async () => {
             del.mutate({ id: row.original.id! , orgId: currentOrgId});
-            await utils.PSICAgency.getAll.refetch();
+            await utils.PSICAgency.getPageItems.refetch();
           }}
           className="cursor-pointer text-destructive"
         />
