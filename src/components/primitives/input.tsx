@@ -3,9 +3,9 @@ import * as React from "react";
 import { cn } from "@/lib/utils";
 
 // eslint-disable-next-line @typescript-eslint/no-empty-interface
-export interface InputProps
-  extends React.InputHTMLAttributes<HTMLInputElement> {}
-
+export interface InputProps extends Omit<React.InputHTMLAttributes<HTMLInputElement>, 'value'> {
+  value: string | number | readonly string[] | null | undefined;
+}
 const Input = React.forwardRef<HTMLInputElement, InputProps>(
   ({ className, type, ...props }, ref) => {
     return (
@@ -17,6 +17,7 @@ const Input = React.forwardRef<HTMLInputElement, InputProps>(
         )}
         ref={ref}
         {...props}
+        value={props.value ?? ''}
       />
     );
   },

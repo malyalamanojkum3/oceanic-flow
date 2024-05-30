@@ -19,8 +19,8 @@ import { useRouter } from "next/navigation";
 import { uiStore } from "@/app/states/ui";
 import type { AppRouterUtilsLike, AppRouterLike } from "@/server/api/root";
 import { insertGeneralCompleteSchema } from "@/server/api/routers/psd/schemas.zod";
-
-import { useMemo } from "react";
+import { useCheckExists } from "@/lib/checkExists"; 
+import { use, useMemo } from "react";
 import { getCountryDataList } from "countries-list";
 import { PhoneInput } from "@/components/primitives/phone-input";
 import {
@@ -42,6 +42,11 @@ type Props =
         | "truckingCompany"
         | "customsHouseAgent"
         | "PSICAgency"]["create"];
+      checkNameExists: AppRouterLike[
+        | "freightForwarder"
+        | "truckingCompany"
+        | "customsHouseAgent"
+        | "PSICAgency"]["checkNameExists"];
       utils?: AppRouterUtilsLike[
         | "freightForwarder"
         | "truckingCompany"
@@ -57,6 +62,11 @@ type Props =
         | "truckingCompany"
         | "customsHouseAgent"
         | "PSICAgency"]["update"];
+      checkNameExists: AppRouterLike[
+        | "freightForwarder"
+        | "truckingCompany"
+        | "customsHouseAgent"
+        | "PSICAgency"]["checkNameExists"];
       utils: AppRouterUtilsLike[
         | "freightForwarder"
         | "truckingCompany"
@@ -95,11 +105,12 @@ const PSDCompleteForm = (props: Props) => {
       toast.error("ERROR");
     },
   });
-
+   const api = props.checkNameExists.useMutation();
+   useCheckExists(form, 'name', api, props.defaultValues?.name);
   const onSubmit = async (
     values: z.infer<typeof insertGeneralCompleteSchema>,
   ) => {
-    call.mutate(values);
+    await call.mutateAsync(values);
     if (!utils) return;
     await utils.getById.invalidate();
   };
@@ -195,6 +206,7 @@ const PSDCompleteForm = (props: Props) => {
           <FormField
             control={form.control}
             name="bank"
+            rules={{ required: false }}
             render={({ field }) => (
               <FormItem className="space-y-1">
                 <FormLabel>Bank Details</FormLabel>
@@ -207,6 +219,9 @@ const PSDCompleteForm = (props: Props) => {
           />
           <Button type="submit">
             {props.variant === "create" ? `Create ${formName}` : "Save changes"}
+          </Button>
+          <Button type="button" className="ml-2" onClick={() => router.push("./")}>
+            Cancel
           </Button>
         </form>
       </Form>

@@ -17,13 +17,13 @@ export const phone = customType<{ data: Value }>({
 const createTable = pgTableCreator((name) => `oceanic-flow_${name}`);
 
 export const PSICAgency = createTable("psic-agency", {
-  id: serial("id").notNull().primaryKey(),
-  name: varchar("name", { length: 255 }).notNull(),
+  id: varchar("id").notNull().primaryKey(),
+  name: varchar("name", { length: 255 }).notNull().unique(),
   email: varchar("email", { length: 255 }).notNull(),
   countryCode: varchar("countryCode", { length: 8 }).notNull(),
   phone: phone("phone", { length: 15 }).notNull(),
   address: varchar("address", { length: 255 }).notNull(),
-  bank: varchar("bank", { length: 255 }).notNull(),
+  bank: varchar("bank", { length: 255 }),
   orgId: varchar("orgId")
     .notNull()
     .references(() => organizations.id, { onDelete: "cascade" }),

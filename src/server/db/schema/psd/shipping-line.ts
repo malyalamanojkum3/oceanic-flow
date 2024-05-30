@@ -5,8 +5,8 @@ import { organizations } from "../organization";
 const createTable = pgTableCreator((name) => `oceanic-flow_${name}`);
 
 export const shippingLine = createTable("shipping-line", {
-  id: serial("id").notNull().primaryKey(),
-  name: varchar("name", { length: 255 }).notNull(),
+  id: varchar("id").notNull().primaryKey(),
+  name: varchar("name", { length: 255 }).notNull().unique(),
   orgId: varchar("orgId")
     .notNull()
     .references(() => organizations.id, { onDelete: "cascade" }),

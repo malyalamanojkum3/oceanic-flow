@@ -11,6 +11,7 @@ const PSDPortOfLoadingPage = () => {
         variant="create"
         formName="Port of Loading"
         apiRoute={api.portOfLoading.create}
+        checkNameExists={api.portOfLoading.checkNameExists}
       />
     </div>
   );

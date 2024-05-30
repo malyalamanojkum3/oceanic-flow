@@ -11,6 +11,7 @@ const PSDCreatePage = () => {
         variant="create"
         formName="Vessel Name"
         apiRoute={api.vesselName.create}
+        checkNameExists={api.vesselName.checkNameExists}  
       />
     </div>
   );

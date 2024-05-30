@@ -34,6 +34,8 @@ import { toast } from "sonner";
 import { useRouter } from "next/navigation";
 import { PhoneInput } from "@/components/primitives/phone-input";
 import type { Country, Value } from "react-phone-number-input";
+import { useEffect } from "react";
+import { useCheckExists } from "@/lib/checkExists";
 
 function PSDSupplierEditForm({
   defaultValues,
@@ -61,9 +63,11 @@ function PSDSupplierEditForm({
       toast.error("ERORR");
     },
   });
+  const checkNameExists = api.supplier.checkNameExists.useMutation();
+  useCheckExists(form, 'name', checkNameExists,defaultValues.name,);
 
   const onSubmit = async (values: z.infer<typeof insertSupplierSchema>) => {
-    update.mutate(values);
+    await update.mutateAsync(values);
     await utils.supplier.getById.invalidate();
   };
 
@@ -187,6 +191,7 @@ function PSDSupplierEditForm({
           <FormField
             control={form.control}
             name="bank"
+            rules={{ required: false}}
             render={({ field }) => (
               <FormItem className="space-y-1">
                 <FormLabel>Bank Details</FormLabel>
@@ -198,6 +203,9 @@ function PSDSupplierEditForm({
             )}
           />
           <Button type="submit">Save changes</Button>
+          <Button type="button" className="ml-2" onClick={() => router.push("./")}>
+            Cancel
+          </Button>
         </form>
       </Form>
     </>

@@ -46,9 +46,11 @@ const CellAction = ({
         </DropdownMenuTrigger>
         <DropdownMenuContent align="end">
           <DropdownMenuLabel>Actions</DropdownMenuLabel>
+          {/*
           <SheetTrigger>
             <DropdownMenuItem>View Freight Forwarder</DropdownMenuItem>
           </SheetTrigger>
+           */}
 
           <DropdownMenuItem
             onClick={() => router.push(`${pn}/${row.original.id}`)}
@@ -90,6 +92,14 @@ export const columns: ColumnDef<z.infer<typeof insertGeneralCompleteSchema>>[] =
       header: "Phone",
     },
     {
+      accessorKey: "address",
+      header: "Address",
+    },
+    {
+      accessorKey: "bank",
+      header: "Bank",
+    },
+    {
       id: "actions",
       cell: CellAction,
     },
@@ -99,7 +109,7 @@ export const columns: ColumnDef<z.infer<typeof insertGeneralCompleteSchema>>[] =
         const utils = api.useUtils();
         const del = api.freightForwarder.delete.useMutation({
           onSuccess: async () => {
-            await utils.freightForwarder.getAll.refetch();
+            await utils.freightForwarder.getPageItems.refetch();
           },
         });
 

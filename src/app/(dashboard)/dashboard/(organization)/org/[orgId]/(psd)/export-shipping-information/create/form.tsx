@@ -19,7 +19,7 @@ import { insertExportShippingInformationSchema } from "@/server/api/routers/psd/
 import { toast } from "sonner";
 import { useRouter } from "next/navigation";
 import { uiStore } from "@/app/states/ui";
-
+import { useCheckExists } from "@/lib/checkExists";
 function PSDExportShippingInformationCreateForm() {
   const router = useRouter();
   const currentOrgId = uiStore.get.currentOrgId();
@@ -44,6 +44,9 @@ function PSDExportShippingInformationCreateForm() {
       toast.error("ERORR");
     },
   });
+  const checkNameExists = api.exportShippingInformation.checkNameExists.useMutation();
+  useCheckExists(form, 'shipper', checkNameExists);
+
 
   const onSubmit = (
     values: z.infer<typeof insertExportShippingInformationSchema>,
@@ -108,6 +111,9 @@ function PSDExportShippingInformationCreateForm() {
             )}
           />
           <Button type="submit">Create Export Shipping Information</Button>
+          <Button type="button" className="ml-2" onClick={() => router.push("./")}>
+            Cancel
+          </Button>
         </form>
       </Form>
     </>

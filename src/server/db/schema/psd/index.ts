@@ -12,6 +12,7 @@ import * as portOfDestination from "./port-of-destination";
 import * as placeOfDelivery from "./place-of-delivery";
 import * as vesselName from "./vessel-name";
 import * as salesOrder from "./sales-order";
+import * as buyer from "./buyer";
 
 export const psd = {
   ...supplier,
@@ -28,5 +29,5 @@ export const psd = {
   ...placeOfDelivery,
   ...vesselName,
   ...salesOrder,
-  // ...buyer,
+  ...buyer,
 };

@@ -14,6 +14,8 @@ import { type ColumnDef } from "@tanstack/react-table";
 import { MoreHorizontal, Trash2 } from "lucide-react";
 import { usePathname, useRouter } from "next/navigation";
 import { type z } from "zod";
+import { uiStore } from "@/app/states/ui";
+const currentOrgId = uiStore.get.currentOrgId();
 
 const CellAction = ({ row }: { row: any }) => {
   const router = useRouter();
@@ -67,6 +69,7 @@ export const columns: ColumnDef<z.infer<typeof insertSupplierSchema>>[] = [
     accessorKey: "bank",
     header: "Bank Details",
   },
+  
   {
     id: "actions",
     cell: CellAction,
@@ -81,12 +84,14 @@ export const columns: ColumnDef<z.infer<typeof insertSupplierSchema>>[] = [
         <Trash2
           size={20}
           onClick={async () => {
-            deleteSupplier.mutate({ id: row.original.id! });
-            await utils.supplier.getAll.refetch();
+            deleteSupplier.mutate({ id: row.original.id!, orgId: currentOrgId });
+            await utils.supplier.getPageItems.refetch();
           }}
           className="cursor-pointer text-destructive"
         />
       );
     },
   },
+   
+  
 ];

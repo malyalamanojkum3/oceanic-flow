@@ -35,7 +35,7 @@ import { useRouter } from "next/navigation";
 import { uiStore } from "@/app/states/ui";
 import { PhoneInput } from "@/components/primitives/phone-input";
 import { type Country } from "react-phone-number-input";
-
+import { useCheckExists } from "@/lib/checkExists";
 function PSDSupplierCreateForm() {
   const countries = useMemo(() => getCountryDataList(), []);
   const router = useRouter();
@@ -64,6 +64,8 @@ function PSDSupplierCreateForm() {
       toast.error("ERORR");
     },
   });
+  const checkNameExists = api.supplier.checkNameExists.useMutation();
+  useCheckExists(form, 'name', checkNameExists);
 
   const onSubmit = (values: z.infer<typeof insertSupplierSchema>) => {
     create.mutate({ ...values, orgId: currentOrgId });
@@ -189,6 +191,9 @@ function PSDSupplierCreateForm() {
           <FormField
             control={form.control}
             name="bank"
+            rules={{ 
+              required: false
+            }}
             render={({ field }) => (
               <FormItem className="space-y-1">
                 <FormLabel>Bank Details</FormLabel>
@@ -199,7 +204,10 @@ function PSDSupplierCreateForm() {
               </FormItem>
             )}
           />
-          <Button type="submit">Create Supplier</Button>
+          <Button type="submit" >Create Supplier</Button>
+          <Button type="button" className="ml-2" onClick={() => router.push("./")}>
+            Cancel
+          </Button>
         </form>
       </Form>
     </>

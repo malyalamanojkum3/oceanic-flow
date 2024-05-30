@@ -1,22 +1,38 @@
 "use client";
-
 import { uiStore } from "@/app/states/ui";
 import { api } from "@/trpc/react";
 import { DataTable } from "@/components/primitives/data-table";
 import { columns } from "./columns";
 import CreatePSDButton from "@/components/dashboard/forms/create-button";
-
-const PSDPortOfLoadingPage = () => {
+import { Pagination } from "@/components/primitives/pagination";
+import { Skeleton } from "@/components/primitives/skeleton";
+const itemsPerPage = 5;
+const PSD = ({
+  searchParams,
+}: {
+  searchParams?: {
+    query?: string;
+    page?: string;
+  };
+}) => {
   const currentOrgId = uiStore.get.currentOrgId();
-  const portOfDestination = api.portOfDestination.getAll.useQuery({
-    orgId: currentOrgId,
-  });
+  const currentPage = Number(searchParams?.page) || 1;
+  const Items = api.portOfDestination.getPageItems.useQuery({ orgId: currentOrgId, page: currentPage, itemsPerPage });
+  
+  const totalPages = Items.data?.totalPages ?? 0;
+
+  if(Items.isLoading) return <Skeleton className="h-96" />;
+  if(Items.error) return <div>Error: {Items.error.message}</div>;
   return (
     <div className="flex w-full flex-col">
       <CreatePSDButton />
-      <DataTable columns={columns} data={portOfDestination.data ?? []} />
+      <DataTable columns={columns} data={Items.data?.items ?? []} />
+      <Pagination
+        currentPage={currentPage}
+        totalPages={totalPages}
+      />
     </div>
   );
 };
 
-export default PSDPortOfLoadingPage;
+export default PSD;

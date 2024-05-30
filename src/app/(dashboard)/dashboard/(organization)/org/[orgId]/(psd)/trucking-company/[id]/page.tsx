@@ -2,13 +2,13 @@
 
 import { api } from "@/trpc/react";
 import PSDCompleteForm from "@/components/dashboard/forms/psd/complete-form";
-
-const PSDEditPage = ({ params }: { params: { id: number } }) => {
+import { Skeleton } from "@/components/primitives/skeleton";
+const PSDEditPage = ({ params }: { params: { id: string } }) => {
   const apiUtils = api.useUtils().truckingCompany;
   const truckingCompany = api.truckingCompany.getById.useQuery({
     id: params.id,
   }).data;
-  if (!truckingCompany) return <div>Loading</div>;
+  if (!truckingCompany) return <Skeleton className="h-96" />;
   return (
     <>
       <PSDCompleteForm
@@ -16,6 +16,7 @@ const PSDEditPage = ({ params }: { params: { id: number } }) => {
         variant="update"
         apiRoute={api.truckingCompany.update}
         utils={apiUtils}
+        checkNameExists={api.truckingCompany.checkNameExists}
       />
     </>
   );

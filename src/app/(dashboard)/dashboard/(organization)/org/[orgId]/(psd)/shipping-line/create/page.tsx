@@ -10,6 +10,7 @@ const PSDShippingLinePage = () => {
         variant="create"
         formName="Shipping Line"
         apiRoute={api.shippingLine.create}
+        checkNameExists={api.shippingLine.checkNameExists}
       />
     </>
   );
