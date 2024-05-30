@@ -1,9 +1,9 @@
+import type { UseFormReturn, FieldValues, Path } from 'react-hook-form';
 import { useEffect } from 'react';
-import { UseFormReturn } from 'react-hook-form';
 
-export function useCheckExists(
-  form: UseFormReturn<any>,
-  fieldName: string,
+export function useCheckExists<T extends FieldValues>(
+  form: UseFormReturn<T>,
+  fieldName: Path<T>,
   checkExists: { mutateAsync: (value: string) => Promise<boolean> },
   defaultValue?: string
 ) {
@@ -18,6 +18,8 @@ export function useCheckExists(
         } else {
           clearErrors(fieldName);
         }
+      }).catch(error => {
+        console.error(error);
       });
     }
   }, [fieldValue]);

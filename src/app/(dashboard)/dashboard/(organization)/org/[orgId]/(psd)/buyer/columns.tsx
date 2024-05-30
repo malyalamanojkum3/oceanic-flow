@@ -23,7 +23,7 @@ interface Buyer {
   countryCode: string;
   phone: string;
   address: string;
-  bank: string;
+  bank: string | null;
   proFormaInvoiceRequired: string;
   cifOrCnf: string;
   preferredCurrency: string;
