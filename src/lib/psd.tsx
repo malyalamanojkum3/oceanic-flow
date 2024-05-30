@@ -15,7 +15,7 @@ import {
   Truck,
   Warehouse,
 } from "lucide-react";
-
+export const orgUrl = "/dashboard/org";
 export const primaryDataSource = [
   { name: "Supplier", icon: <Box /> },
   {

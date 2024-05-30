@@ -9,7 +9,9 @@ import {
   import { insertBuyerSchema as schema } from "./schemas.zod";
   import { buyer as table} from "../../../db/schema/psd/buyer";
   import { count } from "drizzle-orm";
+  import { ilike,and } from 'drizzle-orm';
   import { generateItemId } from "@/lib/utils";
+import { query } from "winston";
  const Router = createTRPCRouter({
         create: managerProcedure.input(schema).mutation(async ({ ctx, input }) => {
             try {
@@ -36,21 +38,31 @@ import {
                 .returning({ table });
         }),
         getPageItems: protectedProcedure
-        .input(z.object({ orgId: z.string(), page: z.number(), itemsPerPage: z.number() }))
+        .input(z.object({ orgId: z.string(),
+             page: z.number(),
+              itemsPerPage: z.number(),
+            query: z.string(),
+        }))
         .query(async ({ ctx, input }) => {
             try {
                 // Count total items
                 const totalItemsResult = await ctx.db
                 .select({ count: count() })
                 .from(table)
-                .where(eq(table.orgId, input.orgId));
+                .where(and(
+                    eq(table.orgId, input.orgId),
+                    ilike(table.name, `%${input.query}%`)
+                ));
                 const totalItems = totalItemsResult[0]?.count ?? 0;
                 // Calculate total pages
                 const totalPages = Math.ceil(totalItems / input.itemsPerPage);
 
                 // Fetch items for current page
                 const items = await ctx.db.query.buyer.findMany({
-                    where: (table, { eq }) => eq(table.orgId, input.orgId), 
+                    where: and(
+                        eq(table.orgId, input.orgId),
+                        ilike(table.name, `%${input.query}%`)
+                    ), 
                     limit: input.itemsPerPage,
                     offset: (input.page - 1) * input.itemsPerPage,
                     with: {
@@ -74,6 +86,19 @@ import {
                         .where(eq(table.name, input));
                     const exists= result.length > 0;
                     return exists;
+                } catch (err) {
+                    throw new TRPCError({ code: "INTERNAL_SERVER_ERROR", cause: err });
+                }
+            }),
+            count: protectedProcedure
+            .input(z.string())
+            .query(async ({ ctx, input }) => {
+                try {
+                    const result = await ctx.db
+                        .select({ count: count() })
+                        .from(table)
+                        .where(eq(table.orgId, input));
+                    return result[0]?.count ?? 0;
                 } catch (err) {
                     throw new TRPCError({ code: "INTERNAL_SERVER_ERROR", cause: err });
                 }

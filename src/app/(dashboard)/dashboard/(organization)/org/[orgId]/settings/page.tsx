@@ -33,13 +33,14 @@ import { uiStore } from "@/app/states/ui";
 import { ACCESS, convertRoleToPermission } from "@/lib/permissions";
 import { useRouter } from "next/navigation";
 import UsersTable from "./usersTable";
-
+import { Label } from "@/components/primitives/label";
 const addUserSchema = z.object({
   input: z.string().email(),
 });
 
 const DashboardOrgSettingsPage = () => {
   const currentOrgId = uiStore.get.currentOrgId();
+  const currentOrgName = uiStore.get.currentOrg()?.name;
   const router = useRouter();
   const utils = api.useUtils();
 
@@ -95,6 +96,7 @@ const DashboardOrgSettingsPage = () => {
 
   return (
     <div >
+      <Label className="text-3xl font-semibold mb-4 pt-0">{currentOrgName}</Label>
     <div className="flex w-full flex-col space-y-8 md:flex-row md:space-x-8 md:space-y-0">
       <div className="w-full md:w-1/2">
         <h2 className="text-xl font-bold">Members</h2>

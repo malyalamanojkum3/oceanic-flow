@@ -9,6 +9,8 @@ import {
   import { insertSupplierSchema as schema } from "./schemas.zod";
   import { supplier as table} from "../../../db/schema/psd/supplier";
   import { count } from "drizzle-orm";
+  import { ilike,and } from 'drizzle-orm';
+
 import { generateItemId } from "@/lib/utils";
  const Router = createTRPCRouter({
         create: managerProcedure.input(schema).mutation(async ({ ctx, input }) => {
@@ -36,14 +38,21 @@ import { generateItemId } from "@/lib/utils";
                 .returning({ table });
         }),
         getPageItems: protectedProcedure
-        .input(z.object({ orgId: z.string(), page: z.number(), itemsPerPage: z.number() }))
+        .input(z.object({ orgId: z.string(),
+             page: z.number(),
+             itemsPerPage: z.number(),
+             query: z.string(),
+             }))
         .query(async ({ ctx, input }) => {
             try {
                 // Count total items
                 const totalItemsResult = await ctx.db
                 .select({ count: count() })
                 .from(table)
-                .where(eq(table.orgId, input.orgId));
+                .where(and(
+                    eq(table.orgId, input.orgId),
+                    ilike(table.name, `%${input.query}%`)
+                ));
                 const totalItems = totalItemsResult[0]?.count ?? 0;
                 // Calculate total pages
                 const totalPages = Math.ceil(totalItems / input.itemsPerPage);
@@ -52,7 +61,10 @@ import { generateItemId } from "@/lib/utils";
                 const items = await ctx.db
                     .select()
                     .from(table)
-                    .where(eq(table.orgId, input.orgId))
+                    .where(and(
+                        eq(table.orgId, input.orgId),
+                        ilike(table.name, `%${input.query}%`)
+                    ))
                     .limit(input.itemsPerPage)
                     .offset((input.page - 1) * input.itemsPerPage);
 
@@ -76,6 +88,21 @@ import { generateItemId } from "@/lib/utils";
                     throw new TRPCError({ code: "INTERNAL_SERVER_ERROR", cause: err });
                 }
             }),
+        // create procedure which takes orgId adn returns count of suppliers
+        count: protectedProcedure
+            .input(z.string())
+            .query(async ({ ctx, input }) => {
+                try {
+                    const result = await ctx.db
+                        .select({ count: count() })
+                        .from(table)
+                        .where(eq(table.orgId, input));
+                    return result[0]?.count ?? 0;
+                } catch (err) {
+                    throw new TRPCError({ code: "INTERNAL_SERVER_ERROR", cause: err });
+                }
+            }),
+
         getById: protectedProcedure
             .input(z.object({ id: z.string() }))
             .query(async ({ ctx, input }) => {

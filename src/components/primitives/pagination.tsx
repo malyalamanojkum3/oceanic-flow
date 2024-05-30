@@ -10,6 +10,7 @@ export function Pagination({ currentPage, totalPages, }: PaginationProps) {
   const pathname = usePathname();
   const searchParams = useSearchParams();
   const router = useRouter();
+  currentPage = totalPages === 0 ? 0 : currentPage;
   const handlePageChange = (pageNumber: number) => {
     if (pageNumber >= 1 && pageNumber <= totalPages) {
     const params = new URLSearchParams(searchParams);

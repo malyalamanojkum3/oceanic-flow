@@ -26,7 +26,7 @@ import {
 import { buttonVariants } from "../primitives/button";
 import { api } from "@/trpc/react";
 import { ACCESS, ACCESS_ROLES } from "@/lib/permissions";
-
+import { orgUrl } from "@/lib/psd";
 const SelectOrganizationsDropdown = dynamic(() => import("./select-orgs"), {
   ssr: false,
   loading: () => (
@@ -36,7 +36,7 @@ const SelectOrganizationsDropdown = dynamic(() => import("./select-orgs"), {
   ),
 });
 
-const orgUrl = "/dashboard/org";
+
 
 const DashboardSideBar = () => {
   const pathname = usePathname();
