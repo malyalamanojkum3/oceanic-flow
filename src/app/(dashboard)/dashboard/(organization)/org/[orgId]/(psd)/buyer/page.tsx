@@ -31,7 +31,7 @@ const PSDBuyerPage = ({
     customsHouseAgent: item.customsHouseAgent.name,
   })) ?? [];
 
-  if(Items.isLoading) return <Skeleton className="h-96" />;
+  
   if(Items.error) return <div>Error: {Items.error.message}</div>;
   return (
     <div className="flex w-full flex-col">
@@ -41,11 +41,17 @@ const PSDBuyerPage = ({
         <SearchBar />
         <CreatePSDButton />
       </div>
-      <DataTable columns={columns} data={flattenedData} />
-      <Pagination
-        currentPage={currentPage}
-        totalPages={totalPages}
-      />
+      {
+        Items.isLoading ? <Skeleton className="h-96" /> : (
+          <div>
+          <DataTable columns={columns} data={flattenedData} />
+          <Pagination
+            currentPage={currentPage}
+            totalPages={totalPages}
+          />
+          </div>
+        )
+      }
     </div>
   );
 };

@@ -24,7 +24,7 @@ const PSDPage = ({
   
   const totalPages = Items.data?.totalPages ?? 0;
 
-  if(Items.isLoading) return <Skeleton className="h-96" />;
+  
   if(Items.error) return <div>Error: {Items.error.message}</div>;
   return (
     <div className="flex w-full flex-col mt-0 pt-0">
@@ -33,12 +33,17 @@ const PSDPage = ({
       style={{ display: 'flex', gap: '10px', alignItems: 'center' }}>
         <SearchBar />
         <CreatePSDButton />
-      </div>
-      <DataTable columns={columns} data={Items.data?.items ?? []} />
-      <Pagination
-        currentPage={currentPage}
-        totalPages={totalPages}
-      />
+      </div>{
+        Items.isLoading ? <Skeleton className="h-96" /> : (
+          <div>
+          <DataTable columns={columns} data={Items.data?.items ?? []} />
+          <Pagination
+            currentPage={currentPage}
+            totalPages={totalPages}
+          />
+          </div>
+        )
+      }
     </div>
   );
 };

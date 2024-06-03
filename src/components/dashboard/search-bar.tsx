@@ -6,14 +6,14 @@ const SearchBar = () => {
     const pathname = usePathname();
     const searchParams = useSearchParams();
     const router = useRouter();
-    const [query, setQuery] = useState('');
+    const params = new URLSearchParams(searchParams);
+    const [query, setQuery] = useState(params.get("query") || "" );
 
     const handleInputChange = (event: React.ChangeEvent<HTMLInputElement>) => {
         setQuery(event.target.value);
     };
 
     const handleSearch = () => {
-    const params = new URLSearchParams(searchParams);
     params.set("query", query.toString());
     const newUrl = `${pathname}?${params.toString()}`;
     router.push(newUrl);
