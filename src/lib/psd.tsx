@@ -74,4 +74,8 @@ export const primaryDataSource = [
     name: "Buyer",
     icon: <BadgeCent />,
   },
+  {
+    name: "Item",
+    icon: <Box />,
+  },
 ];

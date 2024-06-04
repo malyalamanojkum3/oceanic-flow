@@ -1,0 +1,1507 @@
+{
+  "id": "00fbac59-e0b0-4f59-a097-1691a4658f53",
+  "prevId": "4fa47939-3b84-4727-9442-d17dd21fa3ef",
+  "version": "6",
+  "dialect": "postgresql",
+  "tables": {
+    "public.oceanic-flow_account": {
+      "name": "oceanic-flow_account",
+      "schema": "",
+      "columns": {
+        "userId": {
+          "name": "userId",
+          "type": "varchar(255)",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "type": {
+          "name": "type",
+          "type": "varchar(255)",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "provider": {
+          "name": "provider",
+          "type": "varchar(255)",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "providerAccountId": {
+          "name": "providerAccountId",
+          "type": "varchar(255)",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "refresh_token": {
+          "name": "refresh_token",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "access_token": {
+          "name": "access_token",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "expires_at": {
+          "name": "expires_at",
+          "type": "integer",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "token_type": {
+          "name": "token_type",
+          "type": "varchar(255)",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "scope": {
+          "name": "scope",
+          "type": "varchar(255)",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "id_token": {
+          "name": "id_token",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "session_state": {
+          "name": "session_state",
+          "type": "varchar(255)",
+          "primaryKey": false,
+          "notNull": false
+        }
+      },
+      "indexes": {
+        "account_userId_idx": {
+          "name": "account_userId_idx",
+          "columns": [
+            "userId"
+          ],
+          "isUnique": false
+        }
+      },
+      "foreignKeys": {
+        "oceanic-flow_account_userId_oceanic-flow_user_id_fk": {
+          "name": "oceanic-flow_account_userId_oceanic-flow_user_id_fk",
+          "tableFrom": "oceanic-flow_account",
+          "tableTo": "oceanic-flow_user",
+          "columnsFrom": [
+            "userId"
+          ],
+          "columnsTo": [
+            "id"
+          ],
+          "onDelete": "cascade",
+          "onUpdate": "no action"
+        }
+      },
+      "compositePrimaryKeys": {
+        "oceanic-flow_account_provider_providerAccountId_pk": {
+          "name": "oceanic-flow_account_provider_providerAccountId_pk",
+          "columns": [
+            "provider",
+            "providerAccountId"
+          ]
+        }
+      },
+      "uniqueConstraints": {}
+    },
+    "public.oceanic-flow_session": {
+      "name": "oceanic-flow_session",
+      "schema": "",
+      "columns": {
+        "sessionToken": {
+          "name": "sessionToken",
+          "type": "varchar(255)",
+          "primaryKey": true,
+          "notNull": true
+        },
+        "userId": {
+          "name": "userId",
+          "type": "varchar(255)",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "expires": {
+          "name": "expires",
+          "type": "timestamp",
+          "primaryKey": false,
+          "notNull": true
+        }
+      },
+      "indexes": {
+        "session_userId_idx": {
+          "name": "session_userId_idx",
+          "columns": [
+            "userId"
+          ],
+          "isUnique": false
+        }
+      },
+      "foreignKeys": {
+        "oceanic-flow_session_userId_oceanic-flow_user_id_fk": {
+          "name": "oceanic-flow_session_userId_oceanic-flow_user_id_fk",
+          "tableFrom": "oceanic-flow_session",
+          "tableTo": "oceanic-flow_user",
+          "columnsFrom": [
+            "userId"
+          ],
+          "columnsTo": [
+            "id"
+          ],
+          "onDelete": "cascade",
+          "onUpdate": "no action"
+        }
+      },
+      "compositePrimaryKeys": {},
+      "uniqueConstraints": {}
+    },
+    "public.oceanic-flow_user": {
+      "name": "oceanic-flow_user",
+      "schema": "",
+      "columns": {
+        "id": {
+          "name": "id",
+          "type": "varchar(255)",
+          "primaryKey": true,
+          "notNull": true
+        },
+        "name": {
+          "name": "name",
+          "type": "varchar(255)",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "email": {
+          "name": "email",
+          "type": "varchar(255)",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "emailVerified": {
+          "name": "emailVerified",
+          "type": "timestamp",
+          "primaryKey": false,
+          "notNull": false,
+          "default": "CURRENT_TIMESTAMP"
+        },
+        "image": {
+          "name": "image",
+          "type": "varchar(255)",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "hasOnboarded": {
+          "name": "hasOnboarded",
+          "type": "boolean",
+          "primaryKey": false,
+          "notNull": true,
+          "default": false
+        }
+      },
+      "indexes": {
+        "email_idx": {
+          "name": "email_idx",
+          "columns": [
+            "email"
+          ],
+          "isUnique": true
+        }
+      },
+      "foreignKeys": {},
+      "compositePrimaryKeys": {},
+      "uniqueConstraints": {}
+    },
+    "public.oceanic-flow_verificationToken": {
+      "name": "oceanic-flow_verificationToken",
+      "schema": "",
+      "columns": {
+        "identifier": {
+          "name": "identifier",
+          "type": "varchar(255)",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "token": {
+          "name": "token",
+          "type": "varchar(255)",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "expires": {
+          "name": "expires",
+          "type": "timestamp",
+          "primaryKey": false,
+          "notNull": true
+        }
+      },
+      "indexes": {},
+      "foreignKeys": {},
+      "compositePrimaryKeys": {
+        "oceanic-flow_verificationToken_identifier_token_pk": {
+          "name": "oceanic-flow_verificationToken_identifier_token_pk",
+          "columns": [
+            "identifier",
+            "token"
+          ]
+        }
+      },
+      "uniqueConstraints": {}
+    },
+    "public.oceanic-flow_organization": {
+      "name": "oceanic-flow_organization",
+      "schema": "",
+      "columns": {
+        "id": {
+          "name": "id",
+          "type": "varchar",
+          "primaryKey": true,
+          "notNull": true
+        },
+        "name": {
+          "name": "name",
+          "type": "varchar(255)",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "createdAt": {
+          "name": "createdAt",
+          "type": "timestamp",
+          "primaryKey": false,
+          "notNull": true,
+          "default": "CURRENT_TIMESTAMP"
+        },
+        "ownerId": {
+          "name": "ownerId",
+          "type": "varchar(255)",
+          "primaryKey": false,
+          "notNull": true
+        }
+      },
+      "indexes": {},
+      "foreignKeys": {
+        "oceanic-flow_organization_ownerId_oceanic-flow_user_id_fk": {
+          "name": "oceanic-flow_organization_ownerId_oceanic-flow_user_id_fk",
+          "tableFrom": "oceanic-flow_organization",
+          "tableTo": "oceanic-flow_user",
+          "columnsFrom": [
+            "ownerId"
+          ],
+          "columnsTo": [
+            "id"
+          ],
+          "onDelete": "cascade",
+          "onUpdate": "no action"
+        }
+      },
+      "compositePrimaryKeys": {},
+      "uniqueConstraints": {}
+    },
+    "public.oceanic-flow_users_to_organizations": {
+      "name": "oceanic-flow_users_to_organizations",
+      "schema": "",
+      "columns": {
+        "userId": {
+          "name": "userId",
+          "type": "varchar",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "organizationId": {
+          "name": "organizationId",
+          "type": "varchar",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "role": {
+          "name": "role",
+          "type": "role",
+          "typeSchema": "public",
+          "primaryKey": false,
+          "notNull": true,
+          "default": "'viewer'"
+        },
+        "permissions": {
+          "name": "permissions",
+          "type": "bigint",
+          "primaryKey": false,
+          "notNull": true,
+          "default": 7
+        }
+      },
+      "indexes": {},
+      "foreignKeys": {
+        "oceanic-flow_users_to_organizations_userId_oceanic-flow_user_id_fk": {
+          "name": "oceanic-flow_users_to_organizations_userId_oceanic-flow_user_id_fk",
+          "tableFrom": "oceanic-flow_users_to_organizations",
+          "tableTo": "oceanic-flow_user",
+          "columnsFrom": [
+            "userId"
+          ],
+          "columnsTo": [
+            "id"
+          ],
+          "onDelete": "cascade",
+          "onUpdate": "no action"
+        },
+        "oceanic-flow_users_to_organizations_organizationId_oceanic-flow_organization_id_fk": {
+          "name": "oceanic-flow_users_to_organizations_organizationId_oceanic-flow_organization_id_fk",
+          "tableFrom": "oceanic-flow_users_to_organizations",
+          "tableTo": "oceanic-flow_organization",
+          "columnsFrom": [
+            "organizationId"
+          ],
+          "columnsTo": [
+            "id"
+          ],
+          "onDelete": "cascade",
+          "onUpdate": "no action"
+        }
+      },
+      "compositePrimaryKeys": {
+        "oceanic-flow_users_to_organizations_userId_organizationId_pk": {
+          "name": "oceanic-flow_users_to_organizations_userId_organizationId_pk",
+          "columns": [
+            "userId",
+            "organizationId"
+          ]
+        }
+      },
+      "uniqueConstraints": {}
+    },
+    "public.oceanic-flow_buyer": {
+      "name": "oceanic-flow_buyer",
+      "schema": "",
+      "columns": {
+        "id": {
+          "name": "id",
+          "type": "varchar",
+          "primaryKey": true,
+          "notNull": true
+        },
+        "name": {
+          "name": "name",
+          "type": "varchar(255)",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "cifOrCnf": {
+          "name": "cifOrCnf",
+          "type": "cifOrCnf",
+          "typeSchema": "public",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "address": {
+          "name": "address",
+          "type": "varchar(255)",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "countryCode": {
+          "name": "countryCode",
+          "type": "varchar(8)",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "phone": {
+          "name": "phone",
+          "type": "varchar",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "email": {
+          "name": "email",
+          "type": "varchar(255)",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "bank": {
+          "name": "bank",
+          "type": "varchar(255)",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "customsHouseAgentId": {
+          "name": "customsHouseAgentId",
+          "type": "varchar",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "proFormaInvoiceRequired": {
+          "name": "proFormaInvoiceRequired",
+          "type": "boolean",
+          "primaryKey": false,
+          "notNull": false,
+          "default": false
+        },
+        "preferredCurrency": {
+          "name": "preferredCurrency",
+          "type": "preferredCurrency",
+          "typeSchema": "public",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "portOfDestinationId": {
+          "name": "portOfDestinationId",
+          "type": "varchar",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "orgId": {
+          "name": "orgId",
+          "type": "varchar",
+          "primaryKey": false,
+          "notNull": true
+        }
+      },
+      "indexes": {},
+      "foreignKeys": {
+        "oceanic-flow_buyer_customsHouseAgentId_oceanic-flow_customs-house-agent_id_fk": {
+          "name": "oceanic-flow_buyer_customsHouseAgentId_oceanic-flow_customs-house-agent_id_fk",
+          "tableFrom": "oceanic-flow_buyer",
+          "tableTo": "oceanic-flow_customs-house-agent",
+          "columnsFrom": [
+            "customsHouseAgentId"
+          ],
+          "columnsTo": [
+            "id"
+          ],
+          "onDelete": "cascade",
+          "onUpdate": "no action"
+        },
+        "oceanic-flow_buyer_portOfDestinationId_oceanic-flow_port-of-destination_id_fk": {
+          "name": "oceanic-flow_buyer_portOfDestinationId_oceanic-flow_port-of-destination_id_fk",
+          "tableFrom": "oceanic-flow_buyer",
+          "tableTo": "oceanic-flow_port-of-destination",
+          "columnsFrom": [
+            "portOfDestinationId"
+          ],
+          "columnsTo": [
+            "id"
+          ],
+          "onDelete": "cascade",
+          "onUpdate": "no action"
+        },
+        "oceanic-flow_buyer_orgId_oceanic-flow_organization_id_fk": {
+          "name": "oceanic-flow_buyer_orgId_oceanic-flow_organization_id_fk",
+          "tableFrom": "oceanic-flow_buyer",
+          "tableTo": "oceanic-flow_organization",
+          "columnsFrom": [
+            "orgId"
+          ],
+          "columnsTo": [
+            "id"
+          ],
+          "onDelete": "cascade",
+          "onUpdate": "no action"
+        }
+      },
+      "compositePrimaryKeys": {},
+      "uniqueConstraints": {
+        "oceanic-flow_buyer_name_unique": {
+          "name": "oceanic-flow_buyer_name_unique",
+          "nullsNotDistinct": false,
+          "columns": [
+            "name"
+          ]
+        }
+      }
+    },
+    "public.oceanic-flow_customs-house-agent": {
+      "name": "oceanic-flow_customs-house-agent",
+      "schema": "",
+      "columns": {
+        "id": {
+          "name": "id",
+          "type": "varchar(36)",
+          "primaryKey": true,
+          "notNull": true
+        },
+        "name": {
+          "name": "name",
+          "type": "varchar(255)",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "email": {
+          "name": "email",
+          "type": "varchar(255)",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "countryCode": {
+          "name": "countryCode",
+          "type": "varchar(8)",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "phone": {
+          "name": "phone",
+          "type": "varchar",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "address": {
+          "name": "address",
+          "type": "varchar(255)",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "bank": {
+          "name": "bank",
+          "type": "varchar(255)",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "orgId": {
+          "name": "orgId",
+          "type": "varchar",
+          "primaryKey": false,
+          "notNull": true
+        }
+      },
+      "indexes": {},
+      "foreignKeys": {
+        "oceanic-flow_customs-house-agent_orgId_oceanic-flow_organization_id_fk": {
+          "name": "oceanic-flow_customs-house-agent_orgId_oceanic-flow_organization_id_fk",
+          "tableFrom": "oceanic-flow_customs-house-agent",
+          "tableTo": "oceanic-flow_organization",
+          "columnsFrom": [
+            "orgId"
+          ],
+          "columnsTo": [
+            "id"
+          ],
+          "onDelete": "cascade",
+          "onUpdate": "no action"
+        }
+      },
+      "compositePrimaryKeys": {},
+      "uniqueConstraints": {
+        "oceanic-flow_customs-house-agent_name_unique": {
+          "name": "oceanic-flow_customs-house-agent_name_unique",
+          "nullsNotDistinct": false,
+          "columns": [
+            "name"
+          ]
+        }
+      }
+    },
+    "public.oceanic-flow_description-of-goods": {
+      "name": "oceanic-flow_description-of-goods",
+      "schema": "",
+      "columns": {
+        "id": {
+          "name": "id",
+          "type": "varchar",
+          "primaryKey": true,
+          "notNull": true
+        },
+        "quality_description": {
+          "name": "quality_description",
+          "type": "varchar(255)",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "main_grade": {
+          "name": "main_grade",
+          "type": "varchar(255)",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "hs_code": {
+          "name": "hs_code",
+          "type": "varchar(255)",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "stream": {
+          "name": "stream",
+          "type": "varchar(15)",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "orgId": {
+          "name": "orgId",
+          "type": "varchar",
+          "primaryKey": false,
+          "notNull": true
+        }
+      },
+      "indexes": {},
+      "foreignKeys": {
+        "oceanic-flow_description-of-goods_orgId_oceanic-flow_organization_id_fk": {
+          "name": "oceanic-flow_description-of-goods_orgId_oceanic-flow_organization_id_fk",
+          "tableFrom": "oceanic-flow_description-of-goods",
+          "tableTo": "oceanic-flow_organization",
+          "columnsFrom": [
+            "orgId"
+          ],
+          "columnsTo": [
+            "id"
+          ],
+          "onDelete": "cascade",
+          "onUpdate": "no action"
+        }
+      },
+      "compositePrimaryKeys": {},
+      "uniqueConstraints": {
+        "oceanic-flow_description-of-goods_quality_description_unique": {
+          "name": "oceanic-flow_description-of-goods_quality_description_unique",
+          "nullsNotDistinct": false,
+          "columns": [
+            "quality_description"
+          ]
+        }
+      }
+    },
+    "public.oceanic-flow_export-shipping-information": {
+      "name": "oceanic-flow_export-shipping-information",
+      "schema": "",
+      "columns": {
+        "id": {
+          "name": "id",
+          "type": "varchar",
+          "primaryKey": true,
+          "notNull": true
+        },
+        "shipper": {
+          "name": "shipper",
+          "type": "varchar(255)",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "notify_party": {
+          "name": "notify_party",
+          "type": "varchar(255)",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "consignee": {
+          "name": "consignee",
+          "type": "varchar(255)",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "bill_of_landing_notes": {
+          "name": "bill_of_landing_notes",
+          "type": "varchar(255)",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "orgId": {
+          "name": "orgId",
+          "type": "varchar",
+          "primaryKey": false,
+          "notNull": true
+        }
+      },
+      "indexes": {},
+      "foreignKeys": {
+        "oceanic-flow_export-shipping-information_orgId_oceanic-flow_organization_id_fk": {
+          "name": "oceanic-flow_export-shipping-information_orgId_oceanic-flow_organization_id_fk",
+          "tableFrom": "oceanic-flow_export-shipping-information",
+          "tableTo": "oceanic-flow_organization",
+          "columnsFrom": [
+            "orgId"
+          ],
+          "columnsTo": [
+            "id"
+          ],
+          "onDelete": "cascade",
+          "onUpdate": "no action"
+        }
+      },
+      "compositePrimaryKeys": {},
+      "uniqueConstraints": {
+        "oceanic-flow_export-shipping-information_shipper_unique": {
+          "name": "oceanic-flow_export-shipping-information_shipper_unique",
+          "nullsNotDistinct": false,
+          "columns": [
+            "shipper"
+          ]
+        }
+      }
+    },
+    "public.oceanic-flow_freight-forwarder": {
+      "name": "oceanic-flow_freight-forwarder",
+      "schema": "",
+      "columns": {
+        "id": {
+          "name": "id",
+          "type": "varchar",
+          "primaryKey": true,
+          "notNull": true
+        },
+        "name": {
+          "name": "name",
+          "type": "varchar(255)",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "email": {
+          "name": "email",
+          "type": "varchar(255)",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "countryCode": {
+          "name": "countryCode",
+          "type": "varchar(8)",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "phone": {
+          "name": "phone",
+          "type": "varchar",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "address": {
+          "name": "address",
+          "type": "varchar(255)",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "bank": {
+          "name": "bank",
+          "type": "varchar(255)",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "orgId": {
+          "name": "orgId",
+          "type": "varchar",
+          "primaryKey": false,
+          "notNull": true
+        }
+      },
+      "indexes": {},
+      "foreignKeys": {
+        "oceanic-flow_freight-forwarder_orgId_oceanic-flow_organization_id_fk": {
+          "name": "oceanic-flow_freight-forwarder_orgId_oceanic-flow_organization_id_fk",
+          "tableFrom": "oceanic-flow_freight-forwarder",
+          "tableTo": "oceanic-flow_organization",
+          "columnsFrom": [
+            "orgId"
+          ],
+          "columnsTo": [
+            "id"
+          ],
+          "onDelete": "cascade",
+          "onUpdate": "no action"
+        }
+      },
+      "compositePrimaryKeys": {},
+      "uniqueConstraints": {
+        "oceanic-flow_freight-forwarder_name_unique": {
+          "name": "oceanic-flow_freight-forwarder_name_unique",
+          "nullsNotDistinct": false,
+          "columns": [
+            "name"
+          ]
+        }
+      }
+    },
+    "public.oceanic-flow_item": {
+      "name": "oceanic-flow_item",
+      "schema": "",
+      "columns": {
+        "id": {
+          "name": "id",
+          "type": "varchar",
+          "primaryKey": true,
+          "notNull": true
+        },
+        "name": {
+          "name": "name",
+          "type": "varchar(255)",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "notes": {
+          "name": "notes",
+          "type": "varchar(255)[]",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "orgId": {
+          "name": "orgId",
+          "type": "varchar",
+          "primaryKey": false,
+          "notNull": true
+        }
+      },
+      "indexes": {},
+      "foreignKeys": {
+        "oceanic-flow_item_orgId_oceanic-flow_organization_id_fk": {
+          "name": "oceanic-flow_item_orgId_oceanic-flow_organization_id_fk",
+          "tableFrom": "oceanic-flow_item",
+          "tableTo": "oceanic-flow_organization",
+          "columnsFrom": [
+            "orgId"
+          ],
+          "columnsTo": [
+            "id"
+          ],
+          "onDelete": "cascade",
+          "onUpdate": "no action"
+        }
+      },
+      "compositePrimaryKeys": {},
+      "uniqueConstraints": {
+        "oceanic-flow_item_name_unique": {
+          "name": "oceanic-flow_item_name_unique",
+          "nullsNotDistinct": false,
+          "columns": [
+            "name"
+          ]
+        }
+      }
+    },
+    "public.oceanic-flow_place-of-delivery": {
+      "name": "oceanic-flow_place-of-delivery",
+      "schema": "",
+      "columns": {
+        "id": {
+          "name": "id",
+          "type": "varchar",
+          "primaryKey": true,
+          "notNull": true
+        },
+        "name": {
+          "name": "name",
+          "type": "varchar(255)",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "orgId": {
+          "name": "orgId",
+          "type": "varchar",
+          "primaryKey": false,
+          "notNull": true
+        }
+      },
+      "indexes": {},
+      "foreignKeys": {
+        "oceanic-flow_place-of-delivery_orgId_oceanic-flow_organization_id_fk": {
+          "name": "oceanic-flow_place-of-delivery_orgId_oceanic-flow_organization_id_fk",
+          "tableFrom": "oceanic-flow_place-of-delivery",
+          "tableTo": "oceanic-flow_organization",
+          "columnsFrom": [
+            "orgId"
+          ],
+          "columnsTo": [
+            "id"
+          ],
+          "onDelete": "cascade",
+          "onUpdate": "no action"
+        }
+      },
+      "compositePrimaryKeys": {},
+      "uniqueConstraints": {
+        "oceanic-flow_place-of-delivery_name_unique": {
+          "name": "oceanic-flow_place-of-delivery_name_unique",
+          "nullsNotDistinct": false,
+          "columns": [
+            "name"
+          ]
+        }
+      }
+    },
+    "public.oceanic-flow_place-of-loading": {
+      "name": "oceanic-flow_place-of-loading",
+      "schema": "",
+      "columns": {
+        "id": {
+          "name": "id",
+          "type": "varchar",
+          "primaryKey": true,
+          "notNull": true
+        },
+        "name": {
+          "name": "name",
+          "type": "varchar(255)",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "orgId": {
+          "name": "orgId",
+          "type": "varchar",
+          "primaryKey": false,
+          "notNull": true
+        }
+      },
+      "indexes": {},
+      "foreignKeys": {
+        "oceanic-flow_place-of-loading_orgId_oceanic-flow_organization_id_fk": {
+          "name": "oceanic-flow_place-of-loading_orgId_oceanic-flow_organization_id_fk",
+          "tableFrom": "oceanic-flow_place-of-loading",
+          "tableTo": "oceanic-flow_organization",
+          "columnsFrom": [
+            "orgId"
+          ],
+          "columnsTo": [
+            "id"
+          ],
+          "onDelete": "cascade",
+          "onUpdate": "no action"
+        }
+      },
+      "compositePrimaryKeys": {},
+      "uniqueConstraints": {
+        "oceanic-flow_place-of-loading_name_unique": {
+          "name": "oceanic-flow_place-of-loading_name_unique",
+          "nullsNotDistinct": false,
+          "columns": [
+            "name"
+          ]
+        }
+      }
+    },
+    "public.oceanic-flow_port-of-destination": {
+      "name": "oceanic-flow_port-of-destination",
+      "schema": "",
+      "columns": {
+        "id": {
+          "name": "id",
+          "type": "varchar",
+          "primaryKey": true,
+          "notNull": true
+        },
+        "name": {
+          "name": "name",
+          "type": "varchar(255)",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "orgId": {
+          "name": "orgId",
+          "type": "varchar",
+          "primaryKey": false,
+          "notNull": true
+        }
+      },
+      "indexes": {},
+      "foreignKeys": {
+        "oceanic-flow_port-of-destination_orgId_oceanic-flow_organization_id_fk": {
+          "name": "oceanic-flow_port-of-destination_orgId_oceanic-flow_organization_id_fk",
+          "tableFrom": "oceanic-flow_port-of-destination",
+          "tableTo": "oceanic-flow_organization",
+          "columnsFrom": [
+            "orgId"
+          ],
+          "columnsTo": [
+            "id"
+          ],
+          "onDelete": "cascade",
+          "onUpdate": "no action"
+        }
+      },
+      "compositePrimaryKeys": {},
+      "uniqueConstraints": {
+        "oceanic-flow_port-of-destination_name_unique": {
+          "name": "oceanic-flow_port-of-destination_name_unique",
+          "nullsNotDistinct": false,
+          "columns": [
+            "name"
+          ]
+        }
+      }
+    },
+    "public.oceanic-flow_port-of-loading": {
+      "name": "oceanic-flow_port-of-loading",
+      "schema": "",
+      "columns": {
+        "id": {
+          "name": "id",
+          "type": "varchar",
+          "primaryKey": true,
+          "notNull": true
+        },
+        "name": {
+          "name": "name",
+          "type": "varchar(255)",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "orgId": {
+          "name": "orgId",
+          "type": "varchar",
+          "primaryKey": false,
+          "notNull": true
+        }
+      },
+      "indexes": {},
+      "foreignKeys": {
+        "oceanic-flow_port-of-loading_orgId_oceanic-flow_organization_id_fk": {
+          "name": "oceanic-flow_port-of-loading_orgId_oceanic-flow_organization_id_fk",
+          "tableFrom": "oceanic-flow_port-of-loading",
+          "tableTo": "oceanic-flow_organization",
+          "columnsFrom": [
+            "orgId"
+          ],
+          "columnsTo": [
+            "id"
+          ],
+          "onDelete": "cascade",
+          "onUpdate": "no action"
+        }
+      },
+      "compositePrimaryKeys": {},
+      "uniqueConstraints": {
+        "oceanic-flow_port-of-loading_name_unique": {
+          "name": "oceanic-flow_port-of-loading_name_unique",
+          "nullsNotDistinct": false,
+          "columns": [
+            "name"
+          ]
+        }
+      }
+    },
+    "public.oceanic-flow_psic-agency": {
+      "name": "oceanic-flow_psic-agency",
+      "schema": "",
+      "columns": {
+        "id": {
+          "name": "id",
+          "type": "varchar",
+          "primaryKey": true,
+          "notNull": true
+        },
+        "name": {
+          "name": "name",
+          "type": "varchar(255)",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "email": {
+          "name": "email",
+          "type": "varchar(255)",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "countryCode": {
+          "name": "countryCode",
+          "type": "varchar(8)",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "phone": {
+          "name": "phone",
+          "type": "varchar",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "address": {
+          "name": "address",
+          "type": "varchar(255)",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "bank": {
+          "name": "bank",
+          "type": "varchar(255)",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "orgId": {
+          "name": "orgId",
+          "type": "varchar",
+          "primaryKey": false,
+          "notNull": true
+        }
+      },
+      "indexes": {},
+      "foreignKeys": {
+        "oceanic-flow_psic-agency_orgId_oceanic-flow_organization_id_fk": {
+          "name": "oceanic-flow_psic-agency_orgId_oceanic-flow_organization_id_fk",
+          "tableFrom": "oceanic-flow_psic-agency",
+          "tableTo": "oceanic-flow_organization",
+          "columnsFrom": [
+            "orgId"
+          ],
+          "columnsTo": [
+            "id"
+          ],
+          "onDelete": "cascade",
+          "onUpdate": "no action"
+        }
+      },
+      "compositePrimaryKeys": {},
+      "uniqueConstraints": {
+        "oceanic-flow_psic-agency_name_unique": {
+          "name": "oceanic-flow_psic-agency_name_unique",
+          "nullsNotDistinct": false,
+          "columns": [
+            "name"
+          ]
+        }
+      }
+    },
+    "public.oceanic-flow_sales-order": {
+      "name": "oceanic-flow_sales-order",
+      "schema": "",
+      "columns": {
+        "id": {
+          "name": "id",
+          "type": "varchar",
+          "primaryKey": true,
+          "notNull": true
+        },
+        "special_terms": {
+          "name": "special_terms",
+          "type": "varchar(255)",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "orgId": {
+          "name": "orgId",
+          "type": "varchar",
+          "primaryKey": false,
+          "notNull": true
+        }
+      },
+      "indexes": {},
+      "foreignKeys": {
+        "oceanic-flow_sales-order_orgId_oceanic-flow_organization_id_fk": {
+          "name": "oceanic-flow_sales-order_orgId_oceanic-flow_organization_id_fk",
+          "tableFrom": "oceanic-flow_sales-order",
+          "tableTo": "oceanic-flow_organization",
+          "columnsFrom": [
+            "orgId"
+          ],
+          "columnsTo": [
+            "id"
+          ],
+          "onDelete": "cascade",
+          "onUpdate": "no action"
+        }
+      },
+      "compositePrimaryKeys": {},
+      "uniqueConstraints": {
+        "oceanic-flow_sales-order_special_terms_unique": {
+          "name": "oceanic-flow_sales-order_special_terms_unique",
+          "nullsNotDistinct": false,
+          "columns": [
+            "special_terms"
+          ]
+        }
+      }
+    },
+    "public.oceanic-flow_shipping-line": {
+      "name": "oceanic-flow_shipping-line",
+      "schema": "",
+      "columns": {
+        "id": {
+          "name": "id",
+          "type": "varchar",
+          "primaryKey": true,
+          "notNull": true
+        },
+        "name": {
+          "name": "name",
+          "type": "varchar(255)",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "orgId": {
+          "name": "orgId",
+          "type": "varchar",
+          "primaryKey": false,
+          "notNull": true
+        }
+      },
+      "indexes": {},
+      "foreignKeys": {
+        "oceanic-flow_shipping-line_orgId_oceanic-flow_organization_id_fk": {
+          "name": "oceanic-flow_shipping-line_orgId_oceanic-flow_organization_id_fk",
+          "tableFrom": "oceanic-flow_shipping-line",
+          "tableTo": "oceanic-flow_organization",
+          "columnsFrom": [
+            "orgId"
+          ],
+          "columnsTo": [
+            "id"
+          ],
+          "onDelete": "cascade",
+          "onUpdate": "no action"
+        }
+      },
+      "compositePrimaryKeys": {},
+      "uniqueConstraints": {
+        "oceanic-flow_shipping-line_name_unique": {
+          "name": "oceanic-flow_shipping-line_name_unique",
+          "nullsNotDistinct": false,
+          "columns": [
+            "name"
+          ]
+        }
+      }
+    },
+    "public.oceanic-flow_supplier": {
+      "name": "oceanic-flow_supplier",
+      "schema": "",
+      "columns": {
+        "id": {
+          "name": "id",
+          "type": "varchar",
+          "primaryKey": true,
+          "notNull": true
+        },
+        "type": {
+          "name": "type",
+          "type": "type",
+          "typeSchema": "public",
+          "primaryKey": false,
+          "notNull": true,
+          "default": "'supplier'"
+        },
+        "name": {
+          "name": "name",
+          "type": "varchar(255)",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "email": {
+          "name": "email",
+          "type": "varchar(255)",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "countryCode": {
+          "name": "countryCode",
+          "type": "varchar(8)",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "phone": {
+          "name": "phone",
+          "type": "varchar",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "address": {
+          "name": "address",
+          "type": "varchar(255)",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "bank": {
+          "name": "bank",
+          "type": "varchar(255)",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "orgId": {
+          "name": "orgId",
+          "type": "varchar",
+          "primaryKey": false,
+          "notNull": true
+        }
+      },
+      "indexes": {},
+      "foreignKeys": {
+        "oceanic-flow_supplier_orgId_oceanic-flow_organization_id_fk": {
+          "name": "oceanic-flow_supplier_orgId_oceanic-flow_organization_id_fk",
+          "tableFrom": "oceanic-flow_supplier",
+          "tableTo": "oceanic-flow_organization",
+          "columnsFrom": [
+            "orgId"
+          ],
+          "columnsTo": [
+            "id"
+          ],
+          "onDelete": "cascade",
+          "onUpdate": "no action"
+        }
+      },
+      "compositePrimaryKeys": {},
+      "uniqueConstraints": {
+        "oceanic-flow_supplier_name_unique": {
+          "name": "oceanic-flow_supplier_name_unique",
+          "nullsNotDistinct": false,
+          "columns": [
+            "name"
+          ]
+        }
+      }
+    },
+    "public.oceanic-flow_trucking-company": {
+      "name": "oceanic-flow_trucking-company",
+      "schema": "",
+      "columns": {
+        "id": {
+          "name": "id",
+          "type": "varchar",
+          "primaryKey": true,
+          "notNull": true
+        },
+        "name": {
+          "name": "name",
+          "type": "varchar(255)",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "email": {
+          "name": "email",
+          "type": "varchar(255)",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "countryCode": {
+          "name": "countryCode",
+          "type": "varchar(8)",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "phone": {
+          "name": "phone",
+          "type": "varchar",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "address": {
+          "name": "address",
+          "type": "varchar(255)",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "bank": {
+          "name": "bank",
+          "type": "varchar(255)",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "orgId": {
+          "name": "orgId",
+          "type": "varchar",
+          "primaryKey": false,
+          "notNull": true
+        }
+      },
+      "indexes": {},
+      "foreignKeys": {
+        "oceanic-flow_trucking-company_orgId_oceanic-flow_organization_id_fk": {
+          "name": "oceanic-flow_trucking-company_orgId_oceanic-flow_organization_id_fk",
+          "tableFrom": "oceanic-flow_trucking-company",
+          "tableTo": "oceanic-flow_organization",
+          "columnsFrom": [
+            "orgId"
+          ],
+          "columnsTo": [
+            "id"
+          ],
+          "onDelete": "cascade",
+          "onUpdate": "no action"
+        }
+      },
+      "compositePrimaryKeys": {},
+      "uniqueConstraints": {
+        "oceanic-flow_trucking-company_name_unique": {
+          "name": "oceanic-flow_trucking-company_name_unique",
+          "nullsNotDistinct": false,
+          "columns": [
+            "name"
+          ]
+        }
+      }
+    },
+    "public.oceanic-flow_vessel-name": {
+      "name": "oceanic-flow_vessel-name",
+      "schema": "",
+      "columns": {
+        "id": {
+          "name": "id",
+          "type": "varchar",
+          "primaryKey": true,
+          "notNull": true
+        },
+        "name": {
+          "name": "name",
+          "type": "varchar(255)",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "orgId": {
+          "name": "orgId",
+          "type": "varchar",
+          "primaryKey": false,
+          "notNull": true
+        }
+      },
+      "indexes": {},
+      "foreignKeys": {
+        "oceanic-flow_vessel-name_orgId_oceanic-flow_organization_id_fk": {
+          "name": "oceanic-flow_vessel-name_orgId_oceanic-flow_organization_id_fk",
+          "tableFrom": "oceanic-flow_vessel-name",
+          "tableTo": "oceanic-flow_organization",
+          "columnsFrom": [
+            "orgId"
+          ],
+          "columnsTo": [
+            "id"
+          ],
+          "onDelete": "cascade",
+          "onUpdate": "no action"
+        }
+      },
+      "compositePrimaryKeys": {},
+      "uniqueConstraints": {
+        "oceanic-flow_vessel-name_name_unique": {
+          "name": "oceanic-flow_vessel-name_name_unique",
+          "nullsNotDistinct": false,
+          "columns": [
+            "name"
+          ]
+        }
+      }
+    }
+  },
+  "enums": {
+    "public.role": {
+      "name": "role",
+      "schema": "public",
+      "values": [
+        "admin",
+        "manager",
+        "viewer"
+      ]
+    },
+    "public.cifOrCnf": {
+      "name": "cifOrCnf",
+      "schema": "public",
+      "values": [
+        "CIF",
+        "CNF"
+      ]
+    },
+    "public.preferredCurrency": {
+      "name": "preferredCurrency",
+      "schema": "public",
+      "values": [
+        "USD",
+        "CAD"
+      ]
+    },
+    "public.type": {
+      "name": "type",
+      "schema": "public",
+      "values": [
+        "supplier",
+        "broker"
+      ]
+    }
+  },
+  "schemas": {},
+  "_meta": {
+    "columns": {},
+    "schemas": {},
+    "tables": {}
+  }
+}

@@ -19,6 +19,7 @@ import  placeOfDeliveryRouter  from "./routers/psd/placeOfDelivery";
 import  vesselNameRouter  from "./routers/psd/vesselName";
 import  salesOrderRouter  from "./routers/psd/salesOrder";
 import buyerRouter from "./routers/psd/buyer";  
+import itemRouter from "./routers/psd/item";
 
 const psdRouter = {
   supplier: SupplierRouter,
@@ -36,6 +37,7 @@ const psdRouter = {
   vesselName: vesselNameRouter,
   salesOrder: salesOrderRouter,
   buyer: buyerRouter,
+  item: itemRouter,
 };
 
 /**

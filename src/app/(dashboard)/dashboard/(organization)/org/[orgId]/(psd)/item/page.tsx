@@ -20,7 +20,7 @@ const PSDPage = ({
   const currentOrgId = uiStore.get.currentOrgId();
   const currentPage = Number(searchParams?.page) || 1;
   const query = searchParams?.query ?? "";
-  const Items = api.exportShippingInformation.getPageItems.useQuery({ orgId: currentOrgId, page: currentPage, itemsPerPage, query });
+  const Items = api.item.getPageItems.useQuery({ orgId: currentOrgId, page: currentPage, itemsPerPage, query });
   
   const totalPages = Items.data?.totalPages ?? 0;
 
@@ -28,13 +28,12 @@ const PSDPage = ({
   if(Items.error) return <div>Error</div>;
   return (
     <div className="flex w-full flex-col mt-0 pt-0">
-      <Label className="text-3xl font-semibold mt-0 pt-0">Export Shipping Information</Label>
+      <Label className="text-3xl font-semibold mt-0 pt-0">Item</Label>
       <div className="mt-2" 
       style={{ display: 'flex', gap: '10px', alignItems: 'center' }}>
         <SearchBar />
         <CreatePSDButton />
-      </div>
-      {
+      </div>{
         Items.isLoading ? <Skeleton className="h-96" /> : (
           <div>
           <DataTable columns={columns} data={Items.data?.items ?? []} />

@@ -17,6 +17,8 @@ import { placeOfDelivery } from "@/server/db/schema/psd/place-of-delivery";
 import { vesselName } from "@/server/db/schema/psd/vessel-name";
 import { salesOrder } from "@/server/db/schema/psd/sales-order";
 import { buyer } from "@/server/db/schema/psd/buyer";
+import { item } from "@/server/db/schema/psd/item";
+
 export const cifOrCnfEnum = z.enum(["CIF", "CNF"]);
 export const preferredCurrencyEnum = z.enum(["USD", "CAD"]);
 
@@ -162,4 +164,11 @@ export const insertBuyerSchema = createInsertSchema(buyer, {
   preferredCurrency: preferredCurrencyEnum,
   portOfDestinationId: z.string(),
   orgId: z.string(),
+});
+
+export const insertItemSchema = createInsertSchema(item, {
+  id: z.string().optional(),
+  name: z.string(),
+  orgId: z.string(),
+  notes: z.array(z.string()).nullable().optional(),
 });

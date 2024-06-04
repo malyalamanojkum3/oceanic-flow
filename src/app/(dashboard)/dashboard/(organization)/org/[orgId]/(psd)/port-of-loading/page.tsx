@@ -25,7 +25,7 @@ const PSDPage = ({
   const totalPages = Items.data?.totalPages ?? 0;
 
   
-  if(Items.error) return <div>Error: {Items.error.message}</div>;
+  if(Items.error) return <div>Error</div>;
   return (
     <div className="flex w-full flex-col mt-0 pt-0">
       <Label className="text-3xl font-semibold mt-0 pt-0">Port of Loading</Label>

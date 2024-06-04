@@ -32,7 +32,7 @@ const PSDBuyerPage = ({
   })) ?? [];
 
   
-  if(Items.error) return <div>Error: {Items.error.message}</div>;
+  if(Items.error) return <div>Error</div>;
   return (
     <div className="flex w-full flex-col">
       <Label className="text-3xl font-semibold mt-0 pt-0">Supplier</Label>

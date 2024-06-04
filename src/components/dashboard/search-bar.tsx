@@ -7,7 +7,7 @@ const SearchBar = () => {
     const searchParams = useSearchParams();
     const router = useRouter();
     const params = new URLSearchParams(searchParams);
-    const [query, setQuery] = useState(params.get("query") || "" );
+    const [query, setQuery] = useState(params.get("query") ?? "" );
 
     const handleInputChange = (event: React.ChangeEvent<HTMLInputElement>) => {
         setQuery(event.target.value);
